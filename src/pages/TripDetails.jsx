@@ -1,11 +1,10 @@
 import { Link, useParams } from "react-router-dom";
-import trips from "../data/trips";
 import { formatDate } from "../utils/dateUtils";
 import "./TripDetails.css"
 import TripInfoCard from "../components/TripInfoCard";
 import { useState } from "react";
 
-function TripDetails(){
+function TripDetails({trips,setTrips}){
     const{tripId} = useParams();
 
     const trip = trips.find((trip)=>{
@@ -13,6 +12,9 @@ function TripDetails(){
     });
 
     const [isEditing, setIsEditing] = useState(false);
+    const[destination,setDestination] = useState(trip.destination);
+    const[country,setCountry] = useState(trip.country);
+    const[travelers,setTravelers] = useState(trip.travelers);
     if(!trip){
         return(
             <div>
@@ -21,6 +23,24 @@ function TripDetails(){
             </div>
         )
     }
+
+    const handleSave=()=>{
+        const updateTrips = trips.map((currentTrip) =>{
+            if(currentTrip.id=== trip.id){
+                return{
+                    ...currentTrip,
+                    destination: destination,
+                    country: country,
+                    travelers: travelers
+                };
+            }
+            return currentTrip;
+        });
+
+        setTrips(updateTrips);
+        setIsEditing(false);
+    };
+
     return(
         <div className="trip-details">
             <Link to="/dashboard" className="back-link">
@@ -43,11 +63,20 @@ function TripDetails(){
             {isEditing?(
                 <div className="edit-form">
                     <h2>Edit Trip</h2>
-                    <input type="text" defaultValue={trip.destination}/>
-                    <input type="text" defaultValue={trip.country}/>
-                    <input type="text" defaultValue={trip.travelers}/>
+                    <input 
+                        type="text"
+                        value={destination}
+                        onChange={(event)=> setDestination(event.target.value)} />
+                    <input 
+                        type="text" 
+                        value={country}
+                        onChange={(event)=> setCountry(event.target.value)}/>
+                    <input 
+                        type="number" 
+                        value={travelers}
+                        onChange={(event)=> setTravelers(Number(event.target.value))}/>
 
-                    <button>
+                    <button onClick={handleSave}>
                         Save Changes
                     </button>
                 </div>

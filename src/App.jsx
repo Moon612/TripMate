@@ -7,10 +7,12 @@ import Dashboard from "./pages/Dashboard";
 import Explore from "./pages/Explore";
 import DashboardLayout from "./layouts/DashboardLayout";
 import TripDetails from "./pages/TripDetails";
-
+import { useState } from "react";
+import initialTrips from "./data/trips";
 
 
 function App() {
+  const[trips,setTrips] = useState(initialTrips);
   return (
     <BrowserRouter>
     
@@ -33,7 +35,7 @@ function App() {
 
       <Route path="/trips/:tripId" element={
         <DashboardLayout>
-          <TripDetails/>
+          <TripDetails trips={trips} setTrips={setTrips}/>
         </DashboardLayout>
       }
       
