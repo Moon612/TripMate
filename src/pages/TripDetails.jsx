@@ -41,6 +41,14 @@ function TripDetails({trips,setTrips}){
         setIsEditing(false);
     };
 
+    const handleCancel=()=>{
+        setDestination(trip.destination);
+        setCountry(trip.country);
+        setTravelers(trip.travelers);
+
+        setIsEditing(false);
+    };
+
     return(
         <div className="trip-details">
             <Link to="/dashboard" className="back-link">
@@ -74,11 +82,25 @@ function TripDetails({trips,setTrips}){
                     <input 
                         type="number" 
                         value={travelers}
-                        onChange={(event)=> setTravelers(Number(event.target.value))}/>
+                        onChange={(event)=> setTravelers(Number(event.target.value))}
+                    />
 
-                    <button onClick={handleSave}>
-                        Save Changes
-                    </button>
+                    <div className="edit-actions">
+                        <button
+                        type="button"
+                        className="save-button" onClick={handleSave}>
+                            Save Changes
+                        </button>
+
+                        <button
+                            type="button"
+                            className="cancel-button"
+                            onClick={handleCancel}
+                        >
+                            Cancel
+                        </button>
+                    </div>
+
                 </div>
             ) : (
             <button className="edit-button"
