@@ -5,8 +5,12 @@ import trips from "../data/trips";
 import "./Dashboard.css";
 import { formatDate } from "../utils/dateUtils";
 import { Link } from "react-router-dom";
+import { useContext } from "react";
+import AuthContext from "../context/AuthContext";
 
 function Dashboard(){
+
+    const {currentUser} = useContext(AuthContext);
 
     const upcomingTrips = trips.filter((trip)=>{
         const startDate= new Date(trip.startDate);
@@ -33,7 +37,7 @@ function Dashboard(){
     return(
         <div className="dashboard">
             <div className="dashboard-header">
-                <h1>Good Morning!👋</h1>
+                <h1>Good Morning! 👋</h1>
                 <p>Plan Your Next Adventure</p>
             </div>
 

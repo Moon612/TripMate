@@ -4,7 +4,23 @@ import auth from "../firebase/auth";
 
 const AuthContext = createContext();
 
-function AuthContext({children}){
+function AuthProvider({children}){
     const [currentUser, setCurrentUser] = useState(null);
 
+    useEffect(()=>{
+        const unsubscribe = onAuthStateChanged(auth,(user)=>{
+            setCurrentUser(user);
+        });
+
+        return unsubscribe;
+    },[]);
+
+    return(
+        <AuthContext.Provider value={{currentUser}}>
+            {children}
+        </AuthContext.Provider>
+    );
 }
+
+export default AuthContext;
+export {AuthProvider};
