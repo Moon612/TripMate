@@ -13,7 +13,7 @@ const trips = [
         id:2,
         destination:"Manali",
         country:"India",
-        startDate:"2026-09-05",
+        startDate:"2026-08-24",
         endDate:"2026-09-14",
         travelers:3
     },
@@ -21,10 +21,18 @@ const trips = [
         id:3,
         destination:"Bali",
         country:"Indonesia",
-        startDate:"2026-08-20",
-        endDate:"2026-08-26",
+        startDate:"2026-08-22",
+        endDate:"2026-08-29",
         travelers:4
-    }
+    },
+    {
+    id: 4,
+    destination: "Kerala",
+    country: "India",
+    startDate: "2026-06-10",
+    endDate: "2026-06-15",
+    travelers: 2
+}
 ];
 
 export default trips;

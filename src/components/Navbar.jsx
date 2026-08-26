@@ -1,17 +1,46 @@
 import "./Navbar.css";
 import { useContext } from "react";
 import AuthContext from "../context/AuthContext";
+import { signOut } from "firebase/auth";
+import auth from "../firebase/auth";
+import { useNavigate } from "react-router-dom";
 
-function Navbar(){
+function Navbar() {
+    
+    const navigate = useNavigate();
+    const { currentUser } = useContext(AuthContext);
 
-    const {currentUser} = useContext(AuthContext);
-    return(
+    const handleLogout = async () => {
+        try {
+            await signOut(auth);
+            navigate("/")
+        } catch (error) {
+            console.error("Logout Failed:", error);
+        }
+    };
+
+    return (
         <header className="navbar">
             <h2 className="logo">TripMate</h2>
 
             <div className="navbar-right">
-                <span>Welcome:- {currentUser?.email}👋 </span>
-                <button>Profile</button>
+
+                {currentUser && (
+                    <>
+                        <span>
+                            Welcome:- {currentUser.email} 👋
+                        </span>
+
+                        <button>
+                            Profile
+                        </button>
+
+                        <button onClick={handleLogout}>
+                            Logout
+                        </button>
+                    </>
+                )}
+
             </div>
         </header>
     );

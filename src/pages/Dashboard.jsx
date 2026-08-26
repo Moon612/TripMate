@@ -6,29 +6,18 @@ import "./Dashboard.css";
 import { formatDate } from "../utils/dateUtils";
 import { Link } from "react-router-dom";
 import { useContext } from "react";
-import AuthContext from "../context/AuthContext";
+import AuthContext from "../context/AuthContext"; // for firebase Auth
+import { categorizeTrips } from "../utils/tripUtils";
 
 function Dashboard(){
 
-    const {currentUser} = useContext(AuthContext);
+   const {
+    ongoingTrips,
+    upcomingTrips,
+    pastTrips
+    } = categorizeTrips(trips);
 
-    const upcomingTrips = trips.filter((trip)=>{
-        const startDate= new Date(trip.startDate);
-        const today = new Date();
-
-        return startDate>= today;
-    });
-
-    const sortedUpcomingTrips =[...upcomingTrips].sort((a,b)=>{
-        return new Date(a.startDate) - new Date(b.startDate)
-    });
-    const nextTrip = sortedUpcomingTrips[0];
-
-    const remainingTrips = trips.filter((trip)=>{ 
-        return trip.id!== nextTrip?.id;
-    }).sort((a,b)=>{
-        return new Date(a.startDate) - new Date(b.startDate)
-    });
+    const { currentUser } = useContext(AuthContext);
 
     const totalTravelers = trips.reduce((total,trip)=>{
         return total + trip.travelers;
@@ -57,53 +46,71 @@ function Dashboard(){
                 />
             </div>
             
-            <section className="upcoming-trip">
+            <section className="current-trip">
                 <div className="section-header">
-                    <h2>Upcoming Trip</h2>
+                    <h2>Your Trip Now</h2>
                 </div>
 
-                {nextTrip?(
-                    <Link to={`/trips/${nextTrip.id}`} className="upcoming-trip-card">
-                        <div>
-                            <h3>{nextTrip.destination}</h3>
-                            <p>{nextTrip.country}</p>
-                        </div>
+                {ongoingTrips.length > 0 ? (
+                    <div className="current-trips-grid">
+                        {ongoingTrips.map((trip) => (
+                            <Link
+                                key={trip.id}
+                                to={`/trips/${trip.id}`}
+                                className="current-trip-card"
+                            >
+                                <div>
+                                    <h3>{trip.destination}</h3>
+                                    <p>{trip.country}</p>
+                                </div>
 
-                        <div className="upcoming-trip-info">
+                                <div className="current-trip-info">
+                                    <p>
+                                        {formatDate(trip.startDate)} -{" "}
+                                        {formatDate(trip.endDate)}
+                                    </p>
 
-                            <p>
-                                {formatDate(nextTrip.startDate)} - {" "}
-                                {formatDate (nextTrip.endDate)}
-                            </p>
-                            <p>{nextTrip.travelers} Travlers</p>
-                        </div>
-                    </Link>
+                                    <p>
+                                        {trip.travelers} Travelers
+                                    </p>
+
+                                    <p className="trip-status">
+                                        Trip in progress
+                                    </p>
+                                </div>
+                            </Link>
+                        ))}
+                    </div>
                 ) : (
-                    <p>No upcoming trips.</p>
-                )
-
-                }
-
-
+                    <p>No trips in progress right now.</p>
+                )}
 
             </section>
 
 
-            <h2>My Trips</h2>
+           <section className="upcoming-trips">
+                <div className="section-header">
+                    <h2>Upcoming Trips</h2>
 
-            <div className="trips-grid">
-                {remainingTrips.map((trip)=>(
-                    <TripCard
-                    key ={trip.id}
-                    id={trip.id}
-                    destination ={trip.destination}
-                    country ={trip.country}
-                    startDate ={trip.startDate}
-                    endDate ={trip.endDate}
-                    travelers ={trip.travelers}
-                    />
-                ))}
-            </div>
+                    <Link to="/trips">
+                        View all →
+                    </Link>
+                </div>
+
+                <div className="trips-grid">
+                    {upcomingTrips.map((trip) => (
+                        <TripCard
+                            key={trip.id}
+                            id={trip.id}
+                            destination={trip.destination}
+                            country={trip.country}
+                            startDate={trip.startDate}
+                            endDate={trip.endDate}
+                            travelers={trip.travelers}
+                        />
+                    ))}
+                </div>
+            </section>
         </div>
     );
 }
