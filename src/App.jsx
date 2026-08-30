@@ -7,12 +7,11 @@ import Dashboard from "./pages/Dashboard";
 import Explore from "./pages/Explore";
 import TripDetails from "./pages/TripDetails";
 import MyTrips from "./pages/MyTrips";
-import { useState } from "react";
-import initialTrips from "./data/trips";
+import AddTrip from "./pages/AddTrip";
+
 
 function App() {
 
-    const [trips, setTrips] = useState(initialTrips);
 
     return (
         <BrowserRouter>
@@ -70,10 +69,17 @@ function App() {
                     path="/trips/:tripId"
                     element={
                         <ProtectedLayout>
-                            <TripDetails
-                              trips={trips}
-                              setTrips={setTrips}
-                            />
+                                <TripDetails/>
+                        </ProtectedLayout>
+
+                    }
+                />
+
+                <Route
+                    path="/trips/new"
+                    element={
+                        <ProtectedLayout>
+                            <AddTrip />
                         </ProtectedLayout>
                     }
                 />

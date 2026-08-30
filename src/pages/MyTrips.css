@@ -94,3 +94,10 @@
     grid-template-columns: 1fr;
   }
 }
+
+.my-trips-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 32px;
+}

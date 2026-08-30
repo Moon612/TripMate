@@ -1,11 +1,38 @@
-import trips from "../data/trips";
+import { useContext, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import AuthContext from "../context/AuthContext";
+import { getTrips } from "../services/tripService";
 import { categorizeTrips } from "../utils/tripUtils";
 import TripCard from "../components/TripCard";
 import "./MyTrips.css";
-import { useState } from "react";
 
 function MyTrips() {
+    const { currentUser } = useContext(AuthContext);
+
+    const [trips, setTrips] = useState([]);
+    const [loading, setLoading] = useState(true);
     const [activeFilter, setActiveFilter] = useState("all");
+
+    useEffect(() => {
+        const loadTrips = async () => {
+            try {
+                const data = await getTrips(currentUser.uid);
+                setTrips(data);
+            } catch (error) {
+                console.error("Failed to load trips:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        if (currentUser) {
+            loadTrips();
+        }
+    }, [currentUser]);
+
+    if (loading) {
+        return <p>Loading Trips...</p>;
+    }
 
     const {
         ongoingTrips,
@@ -31,8 +58,19 @@ function MyTrips() {
         <div className="my-trips">
 
             <div className="my-trips-header">
-                <h1>My Trips</h1>
-                <p>View and manage all your trips.</p>
+
+                <div>
+                    <h1>My Trips</h1>
+                    <p>View and manage all your trips.</p>
+                </div>
+
+                <Link
+                    to="/trips/new"
+                    className="add-trip-button"
+                >
+                    + Add Trip
+                </Link>
+
             </div>
 
             <div className="trip-filters">

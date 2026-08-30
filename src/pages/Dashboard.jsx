@@ -1,7 +1,9 @@
 
 import TripCard from "../components/TripCard";
 import StatCard from "../components/StatCard";
-import trips from "../data/trips";
+// import trips from "../data/trips";
+import { useEffect,useState } from "react";
+import { getTrips } from "../services/tripService";
 import "./Dashboard.css";
 import { formatDate } from "../utils/dateUtils";
 import { Link } from "react-router-dom";
@@ -11,14 +13,41 @@ import { categorizeTrips } from "../utils/tripUtils";
 
 function Dashboard(){
 
+    // const { currentUser } = useContext(AuthContext);
+
+    const { currentUser } = useContext(AuthContext);
+
+    const [trips,setTrips] = useState([]);
+    const[loading ,setLoading] = useState(true);
+
+    useEffect(() =>{
+        const loadTrips = async()=>{
+            try{
+                //  console.log("Current User:", currentUser);
+                //  console.log("User UID:", currentUser.uid);
+                const data = await getTrips(currentUser.uid);
+                console.log("Trips from Firestore:", data);
+                setTrips(data);
+            } catch(error){
+                console.error("Failed To load trips",error);
+            } finally {
+                setLoading(false);
+            }
+        }
+        loadTrips();
+    },[currentUser]);
+
+    if(loading){
+        return<p>Loading Trips....</p>
+    }
+
    const {
     ongoingTrips,
     upcomingTrips,
     pastTrips
     } = categorizeTrips(trips);
 
-    const { currentUser } = useContext(AuthContext);
-
+    
     const totalTravelers = trips.reduce((total,trip)=>{
         return total + trip.travelers;
     },0)
@@ -26,8 +55,15 @@ function Dashboard(){
     return(
         <div className="dashboard">
             <div className="dashboard-header">
-                <h1>Good Morning! 👋</h1>
-                <p>Plan Your Next Adventure</p>
+                <div>
+                    <h1>Good Morning! 👋</h1>
+                    <p>Plan Your Next Adventure</p>  
+                </div>
+                
+                <Link to="/trips/new" className="add-trip-button">
+                    + Add Trip
+                </Link>
+             
             </div>
 
             <div className="stats-grid">

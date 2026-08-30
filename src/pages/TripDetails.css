@@ -52,8 +52,14 @@
   font-weight: 600;
 }
 
-.edit-button{
+.trip-actions {
+  display: flex;
+  gap: 12px;
   margin-top: 24px;
+}
+
+.edit-button,
+.delete-button {
   padding: 10px 18px;
   background-color: #0f172a;
   color: white;
@@ -63,7 +69,8 @@
   font-size: 14px;
 }
 
-.edit-button:hover {
+.edit-button:hover,
+.delete-button:hover {
   opacity: 0.8;
 }
 

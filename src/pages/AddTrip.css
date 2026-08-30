@@ -1,0 +1,328 @@
+.add-trip-page {
+    width: 100%;
+    min-height: 100%;
+}
+
+.add-trip-container {
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+/* Back button */
+
+.add-trip-back {
+    background: none;
+    border: none;
+    padding: 0;
+    margin-bottom: 28px;
+
+    color: #64748b;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.add-trip-back:hover {
+    color: #0f172a;
+}
+
+
+/* Header */
+
+.add-trip-header {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin-bottom: 32px;
+}
+
+.add-trip-icon {
+    width: 58px;
+    height: 58px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #e0e7ff;
+    border-radius: 16px;
+
+    font-size: 28px;
+}
+
+.add-trip-header h1 {
+    margin: 0 0 6px;
+
+    font-size: 32px;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.add-trip-header p {
+    margin: 0;
+
+    color: #64748b;
+    font-size: 15px;
+}
+
+
+/* Form */
+
+.add-trip-form {
+    background: white;
+
+    border: 1px solid #e2e8f0;
+    border-radius: 20px;
+
+    padding: 36px;
+
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+}
+
+
+/* Sections */
+
+.form-section {
+    padding-bottom: 32px;
+    margin-bottom: 32px;
+
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.form-section:last-of-type {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.section-title {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+
+    margin-bottom: 24px;
+}
+
+.section-title > span {
+    font-size: 22px;
+}
+
+.section-title h2 {
+    margin: 0 0 4px;
+
+    font-size: 17px;
+    color: #0f172a;
+}
+
+.section-title p {
+    margin: 0;
+
+    color: #64748b;
+    font-size: 13px;
+}
+
+
+/* Inputs */
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+
+    margin-bottom: 20px;
+}
+
+.form-group:last-child {
+    margin-bottom: 0;
+}
+
+.form-group label {
+    margin-bottom: 8px;
+
+    color: #334155;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.form-group input {
+    width: 100%;
+    box-sizing: border-box;
+
+    padding: 13px 14px;
+
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+
+    background: #f8fafc;
+
+    color: #0f172a;
+    font-size: 14px;
+
+    outline: none;
+
+    transition: 0.2s ease;
+}
+
+.form-group input::placeholder {
+    color: #94a3b8;
+}
+
+.form-group input:focus {
+    background: white;
+    border-color: #64748b;
+
+    box-shadow: 0 0 0 3px rgba(100, 116, 139, 0.12);
+}
+
+
+/* Dates */
+
+.date-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+}
+
+
+/* Travelers */
+
+.traveler-input {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    max-width: 240px;
+
+    padding: 8px;
+
+    border: 1px solid #cbd5e1;
+    border-radius: 12px;
+
+    background: #f8fafc;
+}
+
+.traveler-input button {
+    width: 40px;
+    height: 40px;
+
+    border: none;
+    border-radius: 8px;
+
+    background: white;
+
+    color: #0f172a;
+    font-size: 20px;
+
+    cursor: pointer;
+
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
+}
+
+.traveler-input button:hover {
+    background: #f1f5f9;
+}
+
+.traveler-count {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    min-width: 90px;
+}
+
+.traveler-count strong {
+    font-size: 18px;
+    color: #0f172a;
+}
+
+.traveler-count span {
+    font-size: 12px;
+    color: #64748b;
+}
+
+
+/* Actions */
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+
+    padding-top: 8px;
+}
+
+.create-trip-button,
+.cancel-trip-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    padding: 12px 20px;
+
+    border-radius: 10px;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: 0.2s ease;
+}
+
+.create-trip-button {
+    border: 1px solid #0f172a;
+
+    background: #0f172a;
+    color: white;
+}
+
+.create-trip-button:hover {
+    background: #1e293b;
+    transform: translateY(-1px);
+}
+
+.create-trip-button span {
+    font-size: 17px;
+}
+
+.cancel-trip-button {
+    border: 1px solid #cbd5e1;
+
+    background: white;
+    color: #334155;
+}
+
+.cancel-trip-button:hover {
+    background: #f8fafc;
+}
+
+
+/* Mobile */
+
+@media (max-width: 700px) {
+
+    .add-trip-container {
+        max-width: 100%;
+    }
+
+    .add-trip-header h1 {
+        font-size: 26px;
+    }
+
+    .add-trip-form {
+        padding: 24px;
+    }
+
+    .date-grid {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+
+    .form-actions {
+        flex-direction: column-reverse;
+    }
+
+    .create-trip-button,
+    .cancel-trip-button {
+        width: 100%;
+    }
+}
