@@ -1,20 +1,91 @@
 * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --primary: #0f172a;
+    --primary-hover: #1e293b;
+
+    --text-primary: #0f172a;
+    --text-secondary: #64748b;
+    --text-muted: #94a3b8;
+
+    --background: #f8fafc;
+    --surface: #ffffff;
+
+    --border: #e2e8f0;
+
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+
+    --shadow-sm: 0 2px 8px rgba(15, 23, 42, 0.04);
+    --shadow-md: 0 8px 24px rgba(15, 23, 42, 0.06);
+
+    --transition: 0.2s ease;
 }
 
 body {
-  font-family: Arial, sans-serif;
-  background-color: #f8fafc;
-  color: #0f172a;
+    font-family: Arial, sans-serif;
+    background-color: var(--background);
+    color: var(--text-primary);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
 }
 
 a {
-  text-decoration: none;
-  color: inherit;
+    text-decoration: none;
+    color: inherit;
 }
 
 button {
-  font-family: inherit;
+    font-family: inherit;
+}
+
+input,
+textarea,
+select {
+    font-family: inherit;
+}
+
+button,
+a {
+    transition: var(--transition);
+}
+
+/* Main application layout */
+
+.app-layout {
+    min-height: 100vh;
+    display: flex;
+}
+
+/* Sidebar stays visible while the page content scrolls */
+
+.sidebar {
+    width: 220px;
+    height: 100vh;
+    flex-shrink: 0;
+    position: fixed;
+    left: 0;
+    top: 0;
+    overflow-y: auto;
+}
+
+/* Everything on the right of the sidebar */
+
+.main-section {
+    margin-left: 220px;
+    width: calc(100% - 220px);
+    min-width: 0;
+    min-height: 100vh;
+}
+
+/* Only the main content area scrolls */
+
+.page-content {
+    padding: 40px;
+    min-height: calc(100vh - 70px);
 }

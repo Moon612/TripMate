@@ -1,43 +1,225 @@
 .navbar {
-  height: 70px;
-  padding: 0 32px;
+    min-height: 72px;
 
-  background-color: #ffffff;
-  border-bottom: 1px solid #e2e8f0;
+    padding: 0 32px;
 
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+    background: var(--surface);
+
+    border-bottom: 1px solid var(--border);
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    position: relative;
+    z-index: 10;
 }
 
-.navbar .logo {
-  font-size: 20px;
-  font-weight: 700;
+
+/* ================================
+   Brand
+================================ */
+
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
 }
+
+.navbar-logo-icon {
+    width: 40px;
+    height: 40px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #f1f5f9;
+
+    border-radius: 11px;
+
+    font-size: 19px;
+}
+
+.logo {
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--text-primary);
+
+    line-height: 1.2;
+}
+
+.navbar-tagline {
+    display: block;
+
+    margin-top: 2px;
+
+    color: var(--text-muted);
+    font-size: 11px;
+}
+
+
+/* ================================
+   Right Side
+================================ */
 
 .navbar-right {
-  display: flex;
-  align-items: center;
-  gap: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
 }
 
-.navbar-right span {
-  color: #64748b;
-  font-size: 14px;
+
+/* ================================
+   User
+================================ */
+
+.navbar-user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    padding: 5px 8px 5px 5px;
+
+    border-radius: 10px;
+
+    transition: var(--transition);
 }
+
+.navbar-user:hover {
+    background: #f8fafc;
+}
+
+.user-avatar {
+    width: 36px;
+    height: 36px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #e2e8f0;
+
+    color: #334155;
+
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+
+    max-width: 180px;
+}
+
+.user-name {
+    color: var(--text-primary);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.user-email {
+    color: var(--text-muted);
+    font-size: 11px;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+
+/* ================================
+   Divider
+================================ */
+
+.navbar-divider {
+    width: 1px;
+    height: 28px;
+
+    background: var(--border);
+
+    margin: 0 4px;
+}
+
+
+/* ================================
+   Buttons
+================================ */
 
 .navbar button {
-  padding: 9px 16px;
+    font-size: 13px;
+    font-weight: 500;
 
-  background-color: #0f172a;
-  color: white;
+    border-radius: 8px;
 
-  border: none;
-  border-radius: 8px;
+    cursor: pointer;
 
-  cursor: pointer;
+    transition: var(--transition);
 }
 
-.navbar button:hover {
-  opacity: 0.9;
+.profile-button {
+    padding: 9px 14px;
+
+    background: transparent;
+
+    color: #475569;
+
+    border: 1px solid var(--border);
+}
+
+.profile-button:hover {
+    background: #f8fafc;
+    border-color: var(--border-hover);
+    color: var(--text-primary);
+}
+
+.logout-button {
+    padding: 9px 14px;
+
+    background: var(--primary);
+
+    color: white;
+
+    border: 1px solid var(--primary);
+}
+
+.logout-button:hover {
+    background: var(--primary-hover);
+
+    transform: translateY(-1px);
+}
+
+
+/* ================================
+   Responsive
+================================ */
+
+@media (max-width: 700px) {
+
+    .navbar {
+        padding: 0 18px;
+    }
+
+    .navbar-tagline {
+        display: none;
+    }
+
+    .user-info {
+        display: none;
+    }
+
+    .navbar-divider {
+        display: none;
+    }
+
+    .profile-button {
+        display: none;
+    }
+
+    .navbar-right {
+        gap: 8px;
+    }
 }

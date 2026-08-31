@@ -1,21 +1,77 @@
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import "./Sidebar.css";
 
-function Sidebar(){
-    return(
+function Sidebar() {
+    return (
         <aside className="sidebar">
-            <h2>TripMate</h2>
 
-            <nav>
-                <Link to ="/dashboard">Dashboard</Link>
-                <Link to ="/explore">Explore</Link>
-                <Link to ="/trips">My Trips</Link>
-                <Link to ="/saved">Saved Places</Link>
-            </nav>
+            <div className="sidebar-content">
+
+                <div className="sidebar-section">
+                    <p className="sidebar-label">MENU</p>
+
+                    <nav className="sidebar-nav">
+
+                        <NavLink
+                            to="/dashboard"
+                            className={({ isActive }) =>
+                                isActive ? "nav-item active" : "nav-item"
+                            }
+                        >
+                            <span className="nav-icon">⌂</span>
+                            <span>Dashboard</span>
+                        </NavLink>
+
+                        <NavLink
+                            to="/explore"
+                            className={({ isActive }) =>
+                                isActive ? "nav-item active" : "nav-item"
+                            }
+                        >
+                            <span className="nav-icon">⌕</span>
+                            <span>Explore</span>
+                        </NavLink>
+
+                        <NavLink
+                            to="/trips"
+                            className={({ isActive }) =>
+                                isActive ? "nav-item active" : "nav-item"
+                            }
+                        >
+                            <span className="nav-icon">✈</span>
+                            <span>My Trips</span>
+                        </NavLink>
+
+                        <NavLink
+                            to="/saved"
+                            className={({ isActive }) =>
+                                isActive ? "nav-item active" : "nav-item"
+                            }
+                        >
+                            <span className="nav-icon">♡</span>
+                            <span>Saved Places</span>
+                        </NavLink>
+
+                    </nav>
+                </div>
+
+            </div>
+
 
             <div className="sidebar-bottom">
-                <Link to="/profile">Profile</Link>
+
+                <NavLink
+                    to="/profile"
+                    className={({ isActive }) =>
+                        isActive ? "nav-item active" : "nav-item"
+                    }
+                >
+                    <span className="nav-icon">◎</span>
+                    <span>Profile</span>
+                </NavLink>
+
             </div>
+
         </aside>
     );
 }

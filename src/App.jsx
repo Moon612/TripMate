@@ -8,6 +8,7 @@ import Explore from "./pages/Explore";
 import TripDetails from "./pages/TripDetails";
 import MyTrips from "./pages/MyTrips";
 import AddTrip from "./pages/AddTrip";
+import DashboardLayout from "./layouts/DashboardLayout";
 
 
 function App() {

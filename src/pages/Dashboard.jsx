@@ -1,152 +1,273 @@
-
 import TripCard from "../components/TripCard";
 import StatCard from "../components/StatCard";
-// import trips from "../data/trips";
-import { useEffect,useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { getTrips } from "../services/tripService";
 import "./Dashboard.css";
 import { formatDate } from "../utils/dateUtils";
 import { Link } from "react-router-dom";
-import { useContext } from "react";
-import AuthContext from "../context/AuthContext"; // for firebase Auth
+import AuthContext from "../context/AuthContext";
 import { categorizeTrips } from "../utils/tripUtils";
 
-function Dashboard(){
-
-    // const { currentUser } = useContext(AuthContext);
-
+function Dashboard() {
     const { currentUser } = useContext(AuthContext);
 
-    const [trips,setTrips] = useState([]);
-    const[loading ,setLoading] = useState(true);
+    const [trips, setTrips] = useState([]);
+    const [loading, setLoading] = useState(true);
 
-    useEffect(() =>{
-        const loadTrips = async()=>{
-            try{
-                //  console.log("Current User:", currentUser);
-                //  console.log("User UID:", currentUser.uid);
+    useEffect(() => {
+        const loadTrips = async () => {
+            try {
                 const data = await getTrips(currentUser.uid);
                 console.log("Trips from Firestore:", data);
                 setTrips(data);
-            } catch(error){
-                console.error("Failed To load trips",error);
+            } catch (error) {
+                console.error("Failed To load trips", error);
             } finally {
                 setLoading(false);
             }
-        }
-        loadTrips();
-    },[currentUser]);
+        };
 
-    if(loading){
-        return<p>Loading Trips....</p>
+        if (currentUser) {
+            loadTrips();
+        }
+    }, [currentUser]);
+
+    if (loading) {
+        return (
+            <div className="dashboard-loading">
+                <div className="loading-spinner"></div>
+                <p>Loading your trips...</p>
+            </div>
+        );
     }
 
-   const {
-    ongoingTrips,
-    upcomingTrips,
-    pastTrips
+    const {
+        ongoingTrips,
+        upcomingTrips,
+        pastTrips
     } = categorizeTrips(trips);
 
-    
-    const totalTravelers = trips.reduce((total,trip)=>{
+    const totalTravelers = trips.reduce((total, trip) => {
         return total + trip.travelers;
-    },0)
+    }, 0);
 
-    return(
+    return (
         <div className="dashboard">
-            <div className="dashboard-header">
-                <div>
-                    <h1>Good Morning! 👋</h1>
-                    <p>Plan Your Next Adventure</p>  
+
+            <section className="dashboard-welcome">
+
+                <div className="welcome-content">
+                    <span className="welcome-label">YOUR TRAVEL DASHBOARD</span>
+
+                    <h1>
+                        Good Morning! 👋
+                    </h1>
+
+                    <p>
+                        Plan your next adventure and keep all your trips
+                        organized in one place.
+                    </p>
                 </div>
-                
-                <Link to="/trips/new" className="add-trip-button">
-                    + Add Trip
+
+                <Link
+                    to="/trips/new"
+                    className="add-trip-button"
+                >
+                    <span>+</span>
+                    Add New Trip
                 </Link>
-             
-            </div>
 
-            <div className="stats-grid">
-                <StatCard
-                title ="Total Trips"
-                value ={trips.length}
-                />
-                <StatCard
-                title ="Upcoming Trips"
-                value ={upcomingTrips.length}
-                />
+            </section>
 
-                <StatCard
-                title ="Travelers"
-                value ={totalTravelers}
-                />
-            </div>
-            
+            <section className="stats-grid">
+
+                <div className="dashboard-stat">
+                    <div className="stat-icon">✈️</div>
+
+                    <StatCard
+                        title="Total Trips"
+                        value={trips.length}
+                    />
+
+                    <p className="stat-description">
+                        All your adventures
+                    </p>
+                </div>
+
+                <div className="dashboard-stat">
+                    <div className="stat-icon">📅</div>
+
+                    <StatCard
+                        title="Upcoming Trips"
+                        value={upcomingTrips.length}
+                    />
+
+                    <p className="stat-description">
+                        Adventures waiting for you
+                    </p>
+                </div>
+
+                <div className="dashboard-stat">
+                    <div className="stat-icon">👥</div>
+
+                    <StatCard
+                        title="Travelers"
+                        value={totalTravelers}
+                    />
+
+                    <p className="stat-description">
+                        Total travelers across trips
+                    </p>
+                </div>
+
+            </section>
+
             <section className="current-trip">
+
                 <div className="section-header">
-                    <h2>Your Trip Now</h2>
+                    <div>
+                        <span className="section-label">RIGHT NOW</span>
+                        <h2>Your Trip Now</h2>
+                    </div>
                 </div>
 
                 {ongoingTrips.length > 0 ? (
+
                     <div className="current-trips-grid">
+
                         {ongoingTrips.map((trip) => (
                             <Link
                                 key={trip.id}
                                 to={`/trips/${trip.id}`}
                                 className="current-trip-card"
                             >
-                                <div>
+                                <div className="trip-card-top">
+                                    <span className="trip-live">
+                                        ● LIVE
+                                    </span>
+
+                                    <span className="trip-arrow">
+                                        →
+                                    </span>
+                                </div>
+
+                                <div className="current-trip-main">
                                     <h3>{trip.destination}</h3>
                                     <p>{trip.country}</p>
                                 </div>
 
                                 <div className="current-trip-info">
-                                    <p>
-                                        {formatDate(trip.startDate)} -{" "}
-                                        {formatDate(trip.endDate)}
-                                    </p>
 
-                                    <p>
-                                        {trip.travelers} Travelers
-                                    </p>
+                                    <div>
+                                        <span>Date</span>
+                                        <p>
+                                            {formatDate(trip.startDate)} -{" "}
+                                            {formatDate(trip.endDate)}
+                                        </p>
+                                    </div>
 
-                                    <p className="trip-status">
-                                        Trip in progress
-                                    </p>
+                                    <div>
+                                        <span>Travelers</span>
+                                        <p>
+                                            {trip.travelers} people
+                                        </p>
+                                    </div>
+
                                 </div>
                             </Link>
                         ))}
+
                     </div>
+
                 ) : (
-                    <p>No trips in progress right now.</p>
+
+                    <div className="empty-trip-state">
+
+                        <div className="empty-trip-icon">
+                            ✈️
+                        </div>
+
+                        <div>
+                            <h3>No trip in progress</h3>
+                            <p>
+                                You don't have an active trip right now.
+                                Your next adventure could be just a few clicks away.
+                            </p>
+                        </div>
+
+                        <Link
+                            to="/trips/new"
+                            className="empty-state-button"
+                        >
+                            Plan a Trip
+                        </Link>
+
+                    </div>
+
                 )}
 
             </section>
 
+            <section className="upcoming-trips">
 
-           <section className="upcoming-trips">
                 <div className="section-header">
-                    <h2>Upcoming Trips</h2>
 
-                    <Link to="/trips">
+                    <div>
+                        <span className="section-label">COMING UP</span>
+                        <h2>Upcoming Trips</h2>
+                    </div>
+
+                    <Link
+                        to="/trips"
+                        className="view-all-link"
+                    >
                         View all →
                     </Link>
+
                 </div>
 
-                <div className="trips-grid">
-                    {upcomingTrips.map((trip) => (
-                        <TripCard
-                            key={trip.id}
-                            id={trip.id}
-                            destination={trip.destination}
-                            country={trip.country}
-                            startDate={trip.startDate}
-                            endDate={trip.endDate}
-                            travelers={trip.travelers}
-                        />
-                    ))}
-                </div>
+                {upcomingTrips.length > 0 ? (
+
+                    <div className="trips-grid">
+
+                        {upcomingTrips.map((trip) => (
+                            <TripCard
+                                key={trip.id}
+                                id={trip.id}
+                                destination={trip.destination}
+                                country={trip.country}
+                                startDate={trip.startDate}
+                                endDate={trip.endDate}
+                                travelers={trip.travelers}
+                            />
+                        ))}
+
+                    </div>
+
+                ) : (
+
+                    <div className="empty-upcoming-state">
+                        <span>🗺️</span>
+
+                        <div>
+                            <h3>No upcoming trips yet</h3>
+                            <p>
+                                Start planning your next destination.
+                            </p>
+                        </div>
+
+                        <Link
+                            to="/trips/new"
+                            className="empty-state-button"
+                        >
+                            Add Trip
+                        </Link>
+                    </div>
+
+                )}
+
             </section>
+
         </div>
     );
 }

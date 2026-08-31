@@ -2,7 +2,7 @@ import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 import "../index.css"
 
-function DashboardLayout(props){
+function DashboardLayout({children}){
     return(
         <div className="app-layout">
             <Sidebar/>
@@ -11,7 +11,7 @@ function DashboardLayout(props){
                 <Navbar/>
             
                 <main className="page-content">
-                    {props.children}
+                    {children}
                 </main>
             </div>
         </div>
