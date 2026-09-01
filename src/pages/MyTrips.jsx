@@ -31,7 +31,12 @@ function MyTrips() {
     }, [currentUser]);
 
     if (loading) {
-        return <p>Loading Trips...</p>;
+        return (
+            <div className="my-trips-loading">
+                <div className="loading-spinner"></div>
+                <p>Loading your trips...</p>
+            </div>
+        );
     }
 
     const {
@@ -57,61 +62,173 @@ function MyTrips() {
     return (
         <div className="my-trips">
 
-            <div className="my-trips-header">
+            <section className="my-trips-header">
 
-                <div>
+                <div className="my-trips-title">
+
+                    <span className="page-label">
+                        YOUR JOURNEY
+                    </span>
+
                     <h1>My Trips</h1>
-                    <p>View and manage all your trips.</p>
+
+                    <p>
+                        Keep track of your adventures and plan what's next.
+                    </p>
+
                 </div>
 
                 <Link
                     to="/trips/new"
-                    className="add-trip-button"
+                    className="my-trips-add-button"
                 >
-                    + Add Trip
+                    <span>+</span>
+                    Add Trip
                 </Link>
 
-            </div>
+            </section>
 
-            <div className="trip-filters">
 
-                <button
-                    className={activeFilter === "all" ? "active" : ""}
-                    onClick={() => setActiveFilter("all")}
-                >
-                    All ({trips.length})
-                </button>
+            <section className="trip-overview">
 
-                <button
-                    className={activeFilter === "ongoing" ? "active" : ""}
-                    onClick={() => setActiveFilter("ongoing")}
-                >
-                    Ongoing ({ongoingTrips.length})
-                </button>
+                <div className="overview-item">
+                    <span className="overview-number">
+                        {trips.length}
+                    </span>
 
-                <button
-                    className={activeFilter === "upcoming" ? "active" : ""}
-                    onClick={() => setActiveFilter("upcoming")}
-                >
-                    Upcoming ({upcomingTrips.length})
-                </button>
+                    <span className="overview-label">
+                        Total Trips
+                    </span>
+                </div>
 
-                <button
-                    className={activeFilter === "past" ? "active" : ""}
-                    onClick={() => setActiveFilter("past")}
-                >
-                    Past ({pastTrips.length})
-                </button>
+                <div className="overview-divider"></div>
 
-            </div>
+                <div className="overview-item">
+                    <span className="overview-number">
+                        {upcomingTrips.length}
+                    </span>
 
-            <section className="trip-section">
+                    <span className="overview-label">
+                        Upcoming
+                    </span>
+                </div>
 
-                <div className="trips-grid">
+                <div className="overview-divider"></div>
 
-                    {displayedTrips.length > 0 ? (
+                <div className="overview-item">
+                    <span className="overview-number">
+                        {ongoingTrips.length}
+                    </span>
 
-                        displayedTrips.map((trip) => (
+                    <span className="overview-label">
+                        Ongoing
+                    </span>
+                </div>
+
+                <div className="overview-divider"></div>
+
+                <div className="overview-item">
+                    <span className="overview-number">
+                        {pastTrips.length}
+                    </span>
+
+                    <span className="overview-label">
+                        Completed
+                    </span>
+                </div>
+
+            </section>
+
+
+            <section className="trips-section">
+
+                <div className="trips-section-header">
+
+                    <div>
+                        <span className="section-label">
+                            EXPLORE YOUR JOURNEY
+                        </span>
+
+                        <h2>Your Trips</h2>
+                    </div>
+
+                    <span className="trip-count">
+                        {displayedTrips.length}{" "}
+                        {displayedTrips.length === 1 ? "trip" : "trips"}
+                    </span>
+
+                </div>
+
+
+                <div className="trip-filters">
+
+                    <button
+                        className={
+                            activeFilter === "all"
+                                ? "filter-button active"
+                                : "filter-button"
+                        }
+                        onClick={() => setActiveFilter("all")}
+                    >
+                        <span>All</span>
+                        <span className="filter-count">
+                            {trips.length}
+                        </span>
+                    </button>
+
+
+                    <button
+                        className={
+                            activeFilter === "ongoing"
+                                ? "filter-button active"
+                                : "filter-button"
+                        }
+                        onClick={() => setActiveFilter("ongoing")}
+                    >
+                        <span>Ongoing</span>
+                        <span className="filter-count">
+                            {ongoingTrips.length}
+                        </span>
+                    </button>
+
+
+                    <button
+                        className={
+                            activeFilter === "upcoming"
+                                ? "filter-button active"
+                                : "filter-button"
+                        }
+                        onClick={() => setActiveFilter("upcoming")}
+                    >
+                        <span>Upcoming</span>
+                        <span className="filter-count">
+                            {upcomingTrips.length}
+                        </span>
+                    </button>
+
+
+                    <button
+                        className={
+                            activeFilter === "past"
+                                ? "filter-button active"
+                                : "filter-button"
+                        }
+                        onClick={() => setActiveFilter("past")}
+                    >
+                        <span>Past</span>
+                        <span className="filter-count">
+                            {pastTrips.length}
+                        </span>
+                    </button>
+
+                </div>
+
+
+                {displayedTrips.length > 0 ? (
+
+                    <div className="trips-grid">
+
+                        {displayedTrips.map((trip) => (
                             <TripCard
                                 key={trip.id}
                                 id={trip.id}
@@ -121,17 +238,46 @@ function MyTrips() {
                                 endDate={trip.endDate}
                                 travelers={trip.travelers}
                             />
-                        ))
+                        ))}
 
-                    ) : (
+                    </div>
 
-                        <p className="empty-message">
-                            No trips found.
-                        </p>
+                ) : (
 
-                    )}
+                    <div className="empty-trips">
 
-                </div>
+                        <div className="empty-trips-icon">
+                            🗺️
+                        </div>
+
+                        <div className="empty-trips-content">
+
+                            <h3>
+                                {activeFilter === "all"
+                                    ? "Your journey starts here"
+                                    : `No ${activeFilter} trips`}
+                            </h3>
+
+                            <p>
+                                {activeFilter === "all"
+                                    ? "You haven't added any trips yet. Start planning your next adventure."
+                                    : "There are no trips in this category right now."}
+                            </p>
+
+                        </div>
+
+                        {activeFilter === "all" && (
+                            <Link
+                                to="/trips/new"
+                                className="empty-trips-button"
+                            >
+                                Plan Your First Trip
+                            </Link>
+                        )}
+
+                    </div>
+
+                )}
 
             </section>
 

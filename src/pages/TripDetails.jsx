@@ -1,10 +1,10 @@
-import { Link, useParams, useNavigate } from "react-router-dom";
-import { formatDate } from "../utils/dateUtils";
-import "./TripDetails.css";
-import TripInfoCard from "../components/TripInfoCard";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
 import AuthContext from "../context/AuthContext";
-import { getTrip, updateTrip,deleteTrip } from "../services/tripService";
+import { getTrip, updateTrip, deleteTrip } from "../services/tripService";
+import { formatDate } from "../utils/dateUtils";
+import TripInfoCard from "../components/TripInfoCard";
+import "./TripDetails.css";
 
 function TripDetails() {
     const { tripId } = useParams();
@@ -15,9 +15,10 @@ function TripDetails() {
     const [loading, setLoading] = useState(true);
 
     const [isEditing, setIsEditing] = useState(false);
+
     const [destination, setDestination] = useState("");
     const [country, setCountry] = useState("");
-    const [travelers, setTravelers] = useState(0);
+    const [travelers, setTravelers] = useState(1);
 
     useEffect(() => {
         const loadTrip = async () => {
@@ -26,6 +27,7 @@ function TripDetails() {
 
                 if (data) {
                     setTrip(data);
+
                     setDestination(data.destination);
                     setCountry(data.country);
                     setTravelers(data.travelers);
@@ -43,30 +45,52 @@ function TripDetails() {
     }, [currentUser, tripId]);
 
     if (loading) {
-        return <p>Loading Trip...</p>;
+        return (
+            <div className="trip-details-loading">
+                <div className="loading-spinner"></div>
+
+                <p>Loading trip...</p>
+            </div>
+        );
     }
 
     if (!trip) {
         return (
-            <div>
+            <div className="trip-not-found">
+
                 <h1>Trip Not Found</h1>
-                <p>The trip you're looking for doesn't exist.</p>
+
+                <p>
+                    The trip you're looking for doesn't exist.
+                </p>
+
+                <Link
+                    to="/trips"
+                    className="back-link"
+                >
+                    ← Back to My Trips
+                </Link>
+
             </div>
         );
     }
 
     const handleSave = async () => {
+        if (!destination.trim() || !country.trim()) {
+            return;
+        }
+
         try {
             await updateTrip(currentUser.uid, trip.id, {
-                destination: destination,
-                country: country,
+                destination: destination.trim(),
+                country: country.trim(),
                 travelers: travelers
             });
 
             setTrip({
                 ...trip,
-                destination: destination,
-                country: country,
+                destination: destination.trim(),
+                country: country.trim(),
                 travelers: travelers
             });
 
@@ -76,22 +100,21 @@ function TripDetails() {
         }
     };
 
-    const handleDelete = async () =>{
-        const confirmed =window.confirm(
+    const handleDelete = async () => {
+        const confirmed = window.confirm(
             "Are you sure you want to delete this trip?"
         );
-        
-        if(!confirmed){
+
+        if (!confirmed) {
             return;
         }
 
-        try{
+        try {
             await deleteTrip(currentUser.uid, trip.id);
 
             navigate("/trips");
-        }
-        catch(error){
-            console.error("Failed to delete trip:",error);
+        } catch (error) {
+            console.error("Failed to delete trip:", error);
         }
     };
 
@@ -106,55 +129,110 @@ function TripDetails() {
     return (
         <div className="trip-details">
 
-            <Link to="/dashboard" className="back-link">
-                ← Back to Dashboard
+            <Link
+                to="/trips"
+                className="back-link"
+            >
+                ← Back to My Trips
             </Link>
 
-            <h1>{trip.destination}</h1>
-            <p>{trip.country}</p>
+
+            <div className="trip-details-header">
+
+                <div>
+                    <span className="page-label">
+                        TRIP DETAILS
+                    </span>
+
+                    <h1>
+                        {trip.destination}
+                    </h1>
+
+                    <p>
+                        {trip.country}
+                    </p>
+                </div>
+
+            </div>
+
 
             <div className="trip-info-grid">
 
                 <TripInfoCard
-                    label={"Date"}
+                    label="Date"
                     value={`${formatDate(trip.startDate)} - ${formatDate(trip.endDate)}`}
                 />
 
                 <TripInfoCard
-                    label={"Travelers"}
+                    label="Travelers"
                     value={`${trip.travelers} Travelers`}
                 />
 
             </div>
 
+
             {isEditing ? (
+
                 <div className="edit-form">
 
                     <h2>Edit Trip</h2>
 
-                    <input
-                        type="text"
-                        value={destination}
-                        onChange={(event) =>
-                            setDestination(event.target.value)
-                        }
-                    />
+                    <div className="form-group">
 
-                    <input
-                        type="text"
-                        value={country}
-                        onChange={(event) =>
-                            setCountry(event.target.value)
-                        }
-                    />
+                        <label htmlFor="destination">
+                            Destination
+                        </label>
 
-                    <input
-                        type="number"
-                        value={travelers}
-                        onChange={(event) =>
-                            setTravelers(Number(event.target.value))
-                        }
-                    />
+                        <input
+                            id="destination"
+                            type="text"
+                            value={destination}
+                            onChange={(event) =>
+                                setDestination(event.target.value)
+                            }
+                            placeholder="Enter destination"
+                        />
+
+                    </div>
+
+
+                    <div className="form-group">
+
+                        <label htmlFor="country">
+                            Country
+                        </label>
+
+                        <input
+                            id="country"
+                            type="text"
+                            value={country}
+                            onChange={(event) =>
+                                setCountry(event.target.value)
+                            }
+                            placeholder="Enter country"
+                        />
+
+                    </div>
+
+
+                    <div className="form-group">
+
+                        <label htmlFor="travelers">
+                            Travelers
+                        </label>
+
+                        <input
+                            id="travelers"
+                            type="number"
+                            min="1"
+                            value={travelers}
+                            onChange={(event) =>
+                                setTravelers(Number(event.target.value))
+                            }
+                        />
+
+                    </div>
+
 
                     <div className="edit-actions">
 
@@ -177,21 +255,29 @@ function TripDetails() {
                     </div>
 
                 </div>
+
             ) : (
+
                 <div className="trip-actions">
+
                     <button
+                        type="button"
                         className="edit-button"
                         onClick={() => setIsEditing(true)}
                     >
                         Edit Trip
                     </button>
+
                     <button
+                        type="button"
                         className="delete-button"
                         onClick={handleDelete}
                     >
                         Delete Trip
                     </button>
+
                 </div>
+
             )}
 
         </div>

@@ -4,51 +4,123 @@
     margin: 0 auto;
 }
 
-/* Welcome section */
+
+/* Welcome */
 
 .dashboard-welcome {
+    position: relative;
+
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 32px;
+
+    min-height: 210px;
+    padding: 38px 42px;
     margin-bottom: 28px;
-    background: linear-gradient(135deg, #eef4ff, #f8fafc);
+
+    background: linear-gradient(
+        135deg,
+        #eef4ff 0%,
+        #f8fafc 65%,
+        #ffffff 100%
+    );
+
     border: 1px solid #e2e8f0;
     border-radius: 20px;
+
+    overflow: hidden;
+}
+
+.dashboard-welcome::before {
+    content: "";
+
+    position: absolute;
+
+    width: 220px;
+    height: 220px;
+
+    right: -70px;
+    top: -80px;
+
+    border: 1px solid rgba(15, 23, 42, 0.06);
+    border-radius: 50%;
+}
+
+.dashboard-welcome::after {
+    content: "";
+
+    position: absolute;
+
+    width: 140px;
+    height: 140px;
+
+    right: 80px;
+    bottom: -90px;
+
+    border: 1px solid rgba(15, 23, 42, 0.05);
+    border-radius: 50%;
+}
+
+.welcome-content {
+    position: relative;
+    z-index: 1;
 }
 
 .welcome-label,
 .section-label {
     display: block;
-    margin-bottom: 8px;
+
+    margin-bottom: 9px;
+
     color: #64748b;
+
     font-size: 11px;
     font-weight: 700;
-    letter-spacing: 1px;
+
+    letter-spacing: 1.2px;
 }
 
 .welcome-content h1 {
     margin-bottom: 8px;
-    font-size: 34px;
+
+    font-size: 36px;
+    line-height: 1.2;
+    letter-spacing: -0.8px;
 }
 
 .welcome-content p {
     max-width: 550px;
+
     color: #64748b;
+
     font-size: 16px;
     line-height: 1.6;
 }
 
+
+/* Add trip button */
+
 .add-trip-button {
+    position: relative;
+    z-index: 1;
+
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+
+    gap: 9px;
+
     padding: 13px 20px;
+
     background-color: #0f172a;
     color: white;
+
     border-radius: 10px;
+
     font-size: 14px;
     font-weight: 600;
+
+    box-shadow: 0 6px 16px rgba(15, 23, 42, 0.15);
+
     transition: 0.2s ease;
 }
 
@@ -59,43 +131,73 @@
 
 .add-trip-button:hover {
     background-color: #1e293b;
+
     transform: translateY(-2px);
+
+    box-shadow: 0 9px 20px rgba(15, 23, 42, 0.2);
 }
+
 
 /* Stats */
 
 .stats-grid {
     display: grid;
+
     grid-template-columns: repeat(3, 1fr);
+
     gap: 20px;
+
     margin-bottom: 48px;
 }
 
 .dashboard-stat {
     position: relative;
+
     padding: 22px;
-    background: white;
+
+    background-color: white;
+
     border: 1px solid #e2e8f0;
     border-radius: 16px;
+
     box-shadow: 0 5px 20px rgba(15, 23, 42, 0.04);
+
     transition: 0.2s ease;
 }
 
 .dashboard-stat:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+    transform: translateY(-4px);
+
+    border-color: #cbd5e1;
+
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
 }
 
 .stat-icon {
-    margin-bottom: 12px;
-    font-size: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 44px;
+    height: 44px;
+
+    margin-bottom: 16px;
+
+    background-color: #f1f5f9;
+
+    border-radius: 12px;
+
+    font-size: 20px;
 }
 
 .stat-description {
     margin-top: 8px;
+
     color: #94a3b8;
+
     font-size: 13px;
 }
+
 
 /* Sections */
 
@@ -108,92 +210,182 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+
     margin-bottom: 20px;
 }
 
 .section-header h2 {
     margin: 0;
+
     font-size: 22px;
+    letter-spacing: -0.3px;
 }
 
 .view-all-link {
     color: #64748b;
+
     font-size: 14px;
-    font-weight: 500;
+    font-weight: 600;
+
+    transition: 0.2s ease;
 }
 
 .view-all-link:hover {
     color: #0f172a;
+    transform: translateX(2px);
 }
+
 
 /* Current trip */
 
 .current-trips-grid {
     display: grid;
+
     grid-template-columns: repeat(2, 1fr);
+
     gap: 20px;
 }
 
 .current-trip-card {
-    padding: 24px;
+    position: relative;
+
+    padding: 26px;
+
     background: #0f172a;
     color: white;
+
     border-radius: 18px;
-    transition: 0.2s ease;
+
+    overflow: hidden;
+
+    transition: 0.25s ease;
+}
+
+.current-trip-card::after {
+    content: "";
+
+    position: absolute;
+
+    width: 180px;
+    height: 180px;
+
+    right: -70px;
+    bottom: -90px;
+
+    border: 1px solid rgba(255, 255, 255, 0.08);
+
+    border-radius: 50%;
 }
 
 .current-trip-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.18);
+    transform: translateY(-5px);
+
+    box-shadow: 0 15px 35px rgba(15, 23, 42, 0.2);
 }
 
 .trip-card-top {
+    position: relative;
+    z-index: 1;
+
     display: flex;
     align-items: center;
     justify-content: space-between;
 }
 
 .trip-live {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
     color: #86efac;
+
     font-size: 11px;
     font-weight: 700;
+
     letter-spacing: 0.5px;
+}
+
+.live-dot {
+    width: 6px;
+    height: 6px;
+
+    background-color: #86efac;
+
+    border-radius: 50%;
 }
 
 .trip-arrow {
     font-size: 20px;
+
+    transition: 0.2s ease;
+}
+
+.current-trip-card:hover .trip-arrow {
+    transform: translateX(4px);
 }
 
 .current-trip-main {
-    margin: 30px 0;
+    position: relative;
+    z-index: 1;
+
+    margin: 32px 0;
+}
+
+.trip-location {
+    display: block;
+
+    margin-bottom: 8px;
+
+    color: #94a3b8;
+
+    font-size: 10px;
+    font-weight: 700;
+
+    letter-spacing: 1px;
 }
 
 .current-trip-main h3 {
     margin-bottom: 5px;
-    font-size: 28px;
+
+    font-size: 30px;
+    line-height: 1.2;
 }
 
 .current-trip-main p {
     color: #cbd5e1;
+
+    font-size: 15px;
 }
 
 .current-trip-info {
+    position: relative;
+    z-index: 1;
+
     display: flex;
+
     gap: 40px;
+
     padding-top: 18px;
+
     border-top: 1px solid #334155;
 }
 
 .current-trip-info span {
     display: block;
+
     margin-bottom: 5px;
+
     color: #94a3b8;
+
     font-size: 12px;
 }
 
 .current-trip-info p {
+    color: white;
+
     font-size: 14px;
 }
+
 
 /* Empty states */
 
@@ -201,75 +393,157 @@
 .empty-upcoming-state {
     display: flex;
     align-items: center;
+
     gap: 20px;
+
     padding: 28px;
-    background: white;
+
+    background-color: white;
+
     border: 1px dashed #cbd5e1;
     border-radius: 16px;
 }
 
-.empty-trip-icon {
+.empty-trip-icon,
+.empty-upcoming-icon {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 52px;
-    height: 52px;
+
+    width: 54px;
+    height: 54px;
+
     flex-shrink: 0;
-    background: #f1f5f9;
+
+    background-color: #f1f5f9;
+
     border-radius: 14px;
+
     font-size: 23px;
+}
+
+.empty-trip-content {
+    flex: 1;
 }
 
 .empty-trip-state h3,
 .empty-upcoming-state h3 {
     margin-bottom: 5px;
+
     font-size: 16px;
 }
 
 .empty-trip-state p,
 .empty-upcoming-state p {
     color: #64748b;
+
     font-size: 14px;
     line-height: 1.5;
 }
 
 .empty-state-button {
     margin-left: auto;
+
     padding: 10px 16px;
-    background: #0f172a;
+
+    background-color: #0f172a;
     color: white;
+
     border-radius: 8px;
+
     font-size: 13px;
     font-weight: 600;
+
     white-space: nowrap;
+
+    transition: 0.2s ease;
 }
 
 .empty-state-button:hover {
-    background: #1e293b;
+    background-color: #1e293b;
+
+    transform: translateY(-1px);
 }
 
-.empty-upcoming-state > span {
-    font-size: 28px;
+
+/* Dashboard summary */
+
+.dashboard-summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 30px;
+
+    padding: 28px 30px;
+
+    margin-bottom: 20px;
+
+    background-color: white;
+
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
 }
+
+.dashboard-summary h2 {
+    margin-bottom: 5px;
+
+    font-size: 20px;
+}
+
+.dashboard-summary p {
+    color: #64748b;
+
+    font-size: 14px;
+}
+
+.summary-link {
+    padding: 10px 16px;
+
+    border: 1px solid #e2e8f0;
+
+    border-radius: 8px;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    white-space: nowrap;
+
+    transition: 0.2s ease;
+}
+
+.summary-link:hover {
+    border-color: #cbd5e1;
+
+    background-color: #f8fafc;
+}
+
 
 /* Loading */
 
 .dashboard-loading {
     display: flex;
-    min-height: 300px;
     align-items: center;
     justify-content: center;
+
     flex-direction: column;
+
+    min-height: 300px;
+
     gap: 12px;
+
     color: #64748b;
 }
 
 .loading-spinner {
     width: 28px;
     height: 28px;
+
     border: 3px solid #e2e8f0;
     border-top-color: #0f172a;
+
     border-radius: 50%;
+
     animation: spin 0.8s linear infinite;
 }
 
@@ -279,13 +553,17 @@
     }
 }
 
+
 /* Responsive */
 
 @media (max-width: 900px) {
+
     .dashboard-welcome {
         align-items: flex-start;
-        gap: 25px;
+
         flex-direction: column;
+
+        gap: 25px;
     }
 
     .stats-grid {
@@ -297,22 +575,31 @@
     }
 }
 
+
 @media (max-width: 600px) {
+
     .dashboard-welcome {
-        padding: 24px;
+        padding: 26px;
     }
 
     .welcome-content h1 {
-        font-size: 27px;
+        font-size: 28px;
+    }
+
+    .welcome-content p {
+        font-size: 14px;
     }
 
     .add-trip-button {
         width: 100%;
+
+        justify-content: center;
     }
 
     .empty-trip-state,
     .empty-upcoming-state {
         align-items: flex-start;
+
         flex-direction: column;
     }
 
@@ -322,6 +609,19 @@
 
     .current-trip-info {
         flex-direction: column;
+
         gap: 15px;
+    }
+
+    .dashboard-summary {
+        align-items: flex-start;
+
+        flex-direction: column;
+    }
+
+    .summary-link {
+        width: 100%;
+
+        text-align: center;
     }
 }
