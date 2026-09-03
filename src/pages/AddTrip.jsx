@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import AuthContext from "../context/AuthContext";
 import { addTrip } from "../services/tripService";
 import "./AddTrip.css";
+import countries from "../data/countries";
 
 function AddTrip() {
     const { currentUser } = useContext(AuthContext);
@@ -97,16 +98,27 @@ function AddTrip() {
                                 Country
                             </label>
 
-                            <input
+                            <select
                                 id="country"
-                                type="text"
-                                placeholder="e.g. India"
                                 value={country}
                                 onChange={(event) =>
                                     setCountry(event.target.value)
                                 }
                                 required
-                            />
+                            >
+                                <option value="">
+                                    Select a country
+                                </option>
+
+                                {countries.map((countryName) => (
+                                    <option
+                                        key={countryName}
+                                        value={countryName}
+                                    >
+                                        {countryName}
+                                    </option>
+                                ))}
+                            </select>
                         </div>
 
                     </div>

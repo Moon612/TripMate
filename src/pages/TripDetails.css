@@ -358,3 +358,34 @@
         width: 100%;
     }
 }
+
+.edit-form select {
+    width: 100%;
+    box-sizing: border-box;
+
+    padding: 13px 14px;
+
+    margin-top: 10px;
+
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+
+    background-color: #f8fafc;
+
+    color: #0f172a;
+    font-size: 14px;
+
+    outline: none;
+
+    cursor: pointer;
+
+    transition: 0.2s ease;
+}
+
+.edit-form select:focus {
+    background-color: white;
+
+    border-color: #64748b;
+
+    box-shadow: 0 0 0 3px rgba(100, 116, 139, 0.12);
+}

@@ -326,3 +326,31 @@
         width: 100%;
     }
 }
+
+.form-group select {
+    width: 100%;
+    box-sizing: border-box;
+
+    padding: 13px 14px;
+
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+
+    background: #f8fafc;
+
+    color: #0f172a;
+    font-size: 14px;
+
+    outline: none;
+
+    cursor: pointer;
+
+    transition: 0.2s ease;
+}
+
+.form-group select:focus {
+    background: white;
+    border-color: #64748b;
+
+    box-shadow: 0 0 0 3px rgba(100, 116, 139, 0.12);
+}

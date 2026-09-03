@@ -5,6 +5,7 @@ import { getTrip, updateTrip, deleteTrip } from "../services/tripService";
 import { formatDate } from "../utils/dateUtils";
 import TripInfoCard from "../components/TripInfoCard";
 import "./TripDetails.css";
+import countries from "../data/countries";
 
 function TripDetails() {
     const { tripId } = useParams();
@@ -202,15 +203,24 @@ function TripDetails() {
                             Country
                         </label>
 
-                        <input
-                            id="country"
-                            type="text"
+                       <select
                             value={country}
                             onChange={(event) =>
                                 setCountry(event.target.value)
                             }
-                            placeholder="Enter country"
-                        />
+                            required
+                        >
+                            <option value="">Select a country</option>
+
+                            {countries.map((countryName) => (
+                                <option
+                                    key={countryName}
+                                    value={countryName}
+                                >
+                                    {countryName}
+                                </option>
+                            ))}
+                        </select>
 
                     </div>
 

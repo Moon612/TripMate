@@ -141,35 +141,6 @@
 }
 
 
-/* Footer */
-
-.trip-card-footer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    gap: 15px;
-
-    margin-top: 20px;
-
-    color: #94a3b8;
-
-    font-size: 12px;
-}
-
-.trip-card-view {
-    color: #64748b;
-
-    font-weight: 600;
-
-    transition: 0.2s ease;
-}
-
-.trip-card:hover .trip-card-view {
-    color: #0f172a;
-}
-
-
 /* Responsive */
 
 @media (max-width: 600px) {
@@ -190,11 +161,4 @@
         gap: 25px;
     }
 
-    .trip-card-footer {
-        align-items: flex-start;
-
-        flex-direction: column;
-
-        gap: 6px;
-    }
 }
