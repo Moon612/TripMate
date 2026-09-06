@@ -1,16 +1,17 @@
 import { useContext, useEffect, useState } from "react";
-import {Link, useParasm } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import AuthContext from "../context/AuthContext";
-import {getTrip} from "../services/tripService";
-import {formatDate} from "../utils/dateUtils";
-import"./Itinerary.css"; 
-
+import { getTrip } from "../services/tripService";
+import { formatDate } from "../utils/dateUtils";
+import "./itinerary.css";
+import { getActivities } from "../services/activityService";
 function Itinerary(){
-    const{tripId} = useParasm();
+    const{tripId} = useParams();
     const{currentUser} = useContext(AuthContext);
 
     const[trip,setTrip] = useState(null);
     const[loading, setLoading] = useState(true);
+    const[activities,setActivities] = useState([]);
 
     useEffect(()=>{
         const loadTrip = async()=>{
@@ -19,6 +20,13 @@ function Itinerary(){
 
                 if(data){
                     setTrip(data);
+
+                    const activityData = await getActivities(
+                        currentUser.uid,
+                        tripId
+                    );
+
+                    setActivities(activityData);
                 }
             }
             catch(error){
@@ -27,6 +35,7 @@ function Itinerary(){
             finally{
                 setLoading(false);
             }
+            
         };
 
         if(currentUser && tripId){
@@ -99,56 +108,56 @@ function Itinerary(){
 
             <section className="itinerary-section">
 
-                <div className="itinerary-section-header">
+                {activities.length > 0 ? (
+                    <div className="activities-list">
 
-                    <div>
-                        <span className="section-label">
-                            PLAN YOUR DAYS
-                        </span>
+                        {activities.map((activity) => (
+                            <div
+                                key={activity.id}
+                                className="activity-item"
+                            >
+                                <h3>{activity.title}</h3>
 
-                        <h2>
-                            Your Itinerary
-                        </h2>
-                    </div>
+                                <p>
+                                    {activity.location}
+                                </p>
 
-                    <button
-                        type="button"
-                        className="add-activity-button"
-                    >
-                        <span>+</span>
-                        Add Activity
-                    </button>
-
-                </div>
-
-
-                <div className="itinerary-empty">
-
-                    <div className="itinerary-empty-icon">
-                        📍
-                    </div>
-
-                    <div className="itinerary-empty-content">
-
-                        <h3>
-                            Your itinerary is empty
-                        </h3>
-
-                        <p>
-                            Start adding places, meals, and activities
-                            to plan your trip.
-                        </p>
+                                <span>
+                                    {activity.date} · {activity.time}
+                                </span>
+                            </div>
+                        ))}
 
                     </div>
+                ) : (
+                    <div className="itinerary-empty">
 
-                    <button
-                        type="button"
-                        className="empty-add-activity-button"
-                    >
-                        Add Your First Activity
-                    </button>
+                        <div className="itinerary-empty-icon">
+                            📍
+                        </div>
 
-                </div>
+                        <div className="itinerary-empty-content">
+
+                            <h3>
+                                Your itinerary is empty
+                            </h3>
+
+                            <p>
+                                Start adding places, meals, and activities
+                                to plan your trip.
+                            </p>
+
+                        </div>
+
+                        <button
+                            type="button"
+                            className="empty-add-activity-button"
+                        >
+                            Add Your First Activity
+                        </button>
+
+                    </div>
+                )}
 
             </section>
 

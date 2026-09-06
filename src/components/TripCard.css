@@ -67,7 +67,7 @@
     transition: 0.2s ease;
 }
 
-.trip-card:hover .trip-card-arrow {
+.trip-card-arrow:hover {
     background-color: #0f172a;
 
     color: white;
@@ -141,6 +141,45 @@
 }
 
 
+/* Footer */
+
+.trip-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 15px;
+
+    margin-top: 22px;
+
+    padding-top: 16px;
+
+    border-top: 1px solid #e2e8f0;
+}
+
+.trip-card-view,
+.trip-card-itinerary {
+    color: #64748b;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    transition: 0.2s ease;
+}
+
+.trip-card-view:hover {
+    color: #0f172a;
+}
+
+.trip-card-itinerary {
+    color: #0f172a;
+}
+
+.trip-card-itinerary:hover {
+    opacity: 0.7;
+}
+
+
 /* Responsive */
 
 @media (max-width: 600px) {
@@ -161,4 +200,16 @@
         gap: 25px;
     }
 
+    .trip-card-footer {
+        align-items: stretch;
+
+        flex-direction: column;
+
+        gap: 10px;
+    }
+
+    .trip-card-view,
+    .trip-card-itinerary {
+        text-align: center;
+    }
 }

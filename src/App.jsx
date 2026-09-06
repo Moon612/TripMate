@@ -8,10 +8,10 @@ import Explore from "./pages/Explore";
 import TripDetails from "./pages/TripDetails";
 import MyTrips from "./pages/MyTrips";
 import AddTrip from "./pages/AddTrip";
-import DashboardLayout from "./layouts/DashboardLayout";
+import Itinerary from "./components/Itinerary";
 
 
-function App() {
+function App() { 
 
 
     return (
@@ -81,6 +81,15 @@ function App() {
                     element={
                         <ProtectedLayout>
                             <AddTrip />
+                        </ProtectedLayout>
+                    }
+                />
+
+                <Route
+                    path="/trips/:tripId/itinerary"
+                    element={
+                        <ProtectedLayout>
+                            <Itinerary />
                         </ProtectedLayout>
                     }
                 />

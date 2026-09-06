@@ -11,10 +11,9 @@ function TripCard({
     travelers
 }) {
     return (
-        <Link
-            to={`/trips/${id}`}
-            className="trip-card"
-        >
+        <div className="trip-card">
+
+            {/* Header */}
 
             <div className="trip-card-header">
 
@@ -22,12 +21,17 @@ function TripCard({
                     TRIP
                 </span>
 
-                <span className="trip-card-arrow">
+                <Link
+                    to={`/trips/${id}`}
+                    className="trip-card-arrow"
+                >
                     →
-                </span>
+                </Link>
 
             </div>
 
+
+            {/* Main trip information */}
 
             <div className="trip-card-main">
 
@@ -41,6 +45,8 @@ function TripCard({
 
             </div>
 
+
+            {/* Trip details */}
 
             <div className="trip-card-info">
 
@@ -72,7 +78,28 @@ function TripCard({
 
             </div>
 
-        </Link>
+
+            {/* Card actions */}
+
+            <div className="trip-card-footer">
+
+                <Link
+                    to={`/trips/${id}`}
+                    className="trip-card-view"
+                >
+                    View Trip →
+                </Link>
+
+                <Link
+                    to={`/trips/${id}/itinerary`}
+                    className="trip-card-itinerary"
+                >
+                    View Itinerary →
+                </Link>
+
+            </div>
+
+        </div>
     );
 }
 
