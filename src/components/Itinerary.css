@@ -1,3 +1,5 @@
+/* Main itinerary page */
+
 .itinerary-page {
     width: 100%;
     max-width: 1100px;
@@ -5,7 +7,7 @@
 }
 
 
-/* Back link */
+/* Back to trip */
 
 .itinerary-back {
     display: inline-block;
@@ -15,6 +17,7 @@
     color: #64748b;
 
     font-size: 14px;
+    text-decoration: none;
 
     transition: 0.2s ease;
 }
@@ -24,7 +27,7 @@
 }
 
 
-/* Header */
+/* Trip header */
 
 .itinerary-header {
     display: flex;
@@ -69,6 +72,9 @@
     font-size: 15px;
 }
 
+
+/* Trip dates */
+
 .itinerary-dates {
     display: flex;
     align-items: center;
@@ -77,7 +83,7 @@
 
     padding: 11px 15px;
 
-    background-color: white;
+    background: white;
 
     border: 1px solid #e2e8f0;
     border-radius: 10px;
@@ -89,7 +95,7 @@
 }
 
 
-/* Itinerary section */
+/* Itinerary heading */
 
 .itinerary-section {
     margin-bottom: 50px;
@@ -111,12 +117,11 @@
     color: #0f172a;
 
     font-size: 23px;
-
     letter-spacing: -0.3px;
 }
 
 
-/* Add activity button */
+/* Main Add Activity button */
 
 .add-activity-button {
     display: inline-flex;
@@ -127,7 +132,7 @@
 
     padding: 10px 15px;
 
-    background-color: #0f172a;
+    background: #0f172a;
     color: white;
 
     border: 1px solid #0f172a;
@@ -147,89 +152,313 @@
 }
 
 .add-activity-button:hover {
-    background-color: #1e293b;
+    background: #1e293b;
 
     transform: translateY(-1px);
 }
 
 
-/* Empty state */
+/* All itinerary days */
 
-.itinerary-empty {
+.itinerary-days {
     display: flex;
-    align-items: center;
+    flex-direction: column;
 
-    gap: 20px;
+    gap: 24px;
+}
 
-    padding: 30px;
 
-    background-color: white;
+/* Individual day card */
 
-    border: 1px dashed #cbd5e1;
+.itinerary-day {
+    overflow: hidden;
+
+    background: white;
+
+    border: 1px solid #e2e8f0;
     border-radius: 16px;
 }
 
-.itinerary-empty-icon {
+
+/* Day header */
+
+.itinerary-day-header {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
 
-    width: 58px;
-    height: 58px;
+    padding: 20px 24px;
 
-    flex-shrink: 0;
+    background: #f8fafc;
 
-    background-color: #f1f5f9;
-
-    border-radius: 15px;
-
-    font-size: 25px;
+    border-bottom: 1px solid #e2e8f0;
 }
 
-.itinerary-empty-content {
-    flex: 1;
+.day-label {
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: #94a3b8;
+
+    font-size: 10px;
+    font-weight: 700;
+
+    letter-spacing: 1px;
 }
 
-.itinerary-empty-content h3 {
-    margin: 0 0 5px;
+.itinerary-day-header h3 {
+    margin: 0;
 
     color: #0f172a;
 
     font-size: 17px;
 }
 
-.itinerary-empty-content p {
-    margin: 0;
+.day-activity-count {
+    color: #64748b;
+
+    font-size: 12px;
+}
+
+
+/* Activity list */
+
+.activities-list {
+    display: flex;
+    flex-direction: column;
+}
+
+
+/* Individual activity */
+
+.activity-item {
+    display: flex;
+    align-items: flex-start;
+
+    gap: 24px;
+
+    padding: 20px 24px;
+
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.activity-item:last-child {
+    border-bottom: none;
+}
+
+
+/* Activity time */
+
+.activity-time {
+    width: 75px;
+
+    flex-shrink: 0;
+
+    padding-top: 2px;
 
     color: #64748b;
 
-    font-size: 14px;
-    line-height: 1.5;
+    font-size: 13px;
+    font-weight: 600;
 }
 
-.empty-add-activity-button {
-    padding: 10px 16px;
 
-    background-color: white;
+/* Activity information */
+
+.activity-content {
+    flex: 1;
+}
+
+.activity-content h3 {
+    margin: 0 0 6px;
+
+    color: #0f172a;
+
+    font-size: 15px;
+}
+
+.activity-content p {
+    margin: 0 0 5px;
+
+    color: #64748b;
+
+    font-size: 13px;
+}
+
+.activity-notes {
+    display: block;
+
+    margin-top: 8px;
+
+    color: #94a3b8;
+
+    font-size: 12px;
+}
+
+
+/*
+   Add Activity button for a day
+   that already has activities.
+*/
+
+.day-add-activity-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+
+    padding: 14px 24px;
+
+    background: white;
+
+    border-top: 1px solid #e2e8f0;
+}
+
+
+/* Button inside an activity day */
+
+.itinerary-day .day-add-activity-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 34px;
+
+    padding: 8px 13px;
+
+    background: white;
     color: #334155;
 
     border: 1px solid #cbd5e1;
     border-radius: 8px;
 
-    font-size: 13px;
+    font-family: inherit;
+    font-size: 12px;
     font-weight: 600;
+
+    line-height: 1;
 
     white-space: nowrap;
 
     cursor: pointer;
 
-    transition: 0.2s ease;
+    box-sizing: border-box;
+
+    transition: background 0.2s ease,
+                border-color 0.2s ease,
+                transform 0.2s ease;
 }
 
-.empty-add-activity-button:hover {
-    background-color: #f8fafc;
+.itinerary-day .day-add-activity-button:hover {
+    background: #f8fafc;
 
     border-color: #94a3b8;
+
+    transform: translateY(-1px);
+}
+
+.itinerary-day .day-add-activity-button:active {
+    transform: translateY(0);
+}
+
+
+/* Empty day */
+
+.empty-day {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 20px;
+
+    padding: 24px;
+
+    background: white;
+}
+
+.empty-day-content {
+    display: flex;
+    align-items: center;
+
+    gap: 16px;
+}
+
+.empty-day-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 48px;
+    height: 48px;
+
+    flex-shrink: 0;
+
+    background: #f1f5f9;
+
+    border-radius: 12px;
+
+    font-size: 20px;
+}
+
+.empty-day-content strong {
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: #64748b;
+
+    font-size: 14px;
+}
+
+.empty-day-content p {
+    margin: 0;
+
+    color: #94a3b8;
+
+    font-size: 13px;
+}
+
+
+/* Add Activity button on an empty day */
+
+.empty-day .day-add-activity-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 34px;
+
+    padding: 9px 13px;
+
+    background: white;
+    color: #334155;
+
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+
+    line-height: 1;
+
+    white-space: nowrap;
+
+    cursor: pointer;
+
+    box-sizing: border-box;
+
+    transition: background 0.2s ease,
+                border-color 0.2s ease,
+                transform 0.2s ease;
+}
+
+.empty-day .day-add-activity-button:hover {
+    background: #f8fafc;
+
+    border-color: #94a3b8;
+
+    transform: translateY(-1px);
 }
 
 
@@ -268,7 +497,7 @@
 }
 
 
-/* Not found */
+/* Trip not found */
 
 .itinerary-not-found {
     padding: 40px;
@@ -292,6 +521,8 @@
     color: #0f172a;
 
     font-weight: 600;
+
+    text-decoration: none;
 }
 
 
@@ -333,15 +564,47 @@
         width: 100%;
     }
 
-    .itinerary-empty {
+    .itinerary-day-header {
+        padding: 18px;
+    }
+
+    .activity-item {
+        gap: 14px;
+
+        padding: 18px;
+    }
+
+    .activity-time {
+        width: 65px;
+
+        font-size: 12px;
+    }
+
+    .activity-content h3 {
+        font-size: 14px;
+    }
+
+    .empty-day {
         align-items: flex-start;
 
         flex-direction: column;
 
-        padding: 24px;
+        padding: 18px;
     }
 
-    .empty-add-activity-button {
+    .empty-day-content {
+        align-items: flex-start;
+    }
+
+    .empty-day .day-add-activity-button {
         width: 100%;
+    }
+
+    .day-add-activity-wrapper {
+        padding: 12px 18px;
+    }
+
+    .day-add-activity-wrapper .day-add-activity-button {
+        width: auto;
     }
 }
