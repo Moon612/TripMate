@@ -268,6 +268,7 @@
 
 .activity-content {
     flex: 1;
+    min-width: 0;
 }
 
 .activity-content h3 {
@@ -305,7 +306,7 @@
 .day-add-activity-wrapper {
     display: flex;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: flex-end;
 
     padding: 14px 24px;
 
@@ -315,9 +316,9 @@
 }
 
 
-/* Button inside an activity day */
+/* Per-day Add Activity button */
 
-.itinerary-day .day-add-activity-button {
+.day-add-activity-button {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -326,10 +327,10 @@
 
     padding: 8px 13px;
 
-    background: white;
-    color: #334155;
+    background: #0f172a;
+    color: white;
 
-    border: 1px solid #cbd5e1;
+    border: 1px solid #0f172a;
     border-radius: 8px;
 
     font-family: inherit;
@@ -349,15 +350,66 @@
                 transform 0.2s ease;
 }
 
-.itinerary-day .day-add-activity-button:hover {
-    background: #f8fafc;
+.activity-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
 
+.activity-action-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 32px;
+    height: 32px;
+
+    padding: 0;
+
+    background: white;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+
+    color: #475569;
+    cursor: pointer;
+}
+
+.activity-action-button:hover:not(:disabled) {
+    background: #f8fafc;
     border-color: #94a3b8;
+    color: #0f172a;
+}
+
+.activity-action-button:disabled {
+    cursor: wait;
+    opacity: 0.6;
+}
+
+.activity-delete-button:hover:not(:disabled) {
+    background: #fef2f2;
+    border-color: #fecaca;
+    color: #dc2626;
+}
+
+.itinerary-action-error {
+    margin: 0 0 16px;
+    color: #b91c1c;
+    font-size: 13px;
+}
+
+.empty-day .day-add-activity-button {
+    margin-left: auto;
+}
+
+.day-add-activity-button:hover {
+    background: #1e293b;
+
+    border-color: #1e293b;
 
     transform: translateY(-1px);
 }
 
-.itinerary-day .day-add-activity-button:active {
+.day-add-activity-button:active {
     transform: translateY(0);
 }
 
@@ -416,49 +468,6 @@
     color: #94a3b8;
 
     font-size: 13px;
-}
-
-
-/* Add Activity button on an empty day */
-
-.empty-day .day-add-activity-button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    min-height: 34px;
-
-    padding: 9px 13px;
-
-    background: white;
-    color: #334155;
-
-    border: 1px solid #cbd5e1;
-    border-radius: 8px;
-
-    font-family: inherit;
-    font-size: 12px;
-    font-weight: 600;
-
-    line-height: 1;
-
-    white-space: nowrap;
-
-    cursor: pointer;
-
-    box-sizing: border-box;
-
-    transition: background 0.2s ease,
-                border-color 0.2s ease,
-                transform 0.2s ease;
-}
-
-.empty-day .day-add-activity-button:hover {
-    background: #f8fafc;
-
-    border-color: #94a3b8;
-
-    transform: translateY(-1px);
 }
 
 
@@ -574,6 +583,10 @@
         padding: 18px;
     }
 
+    .activity-actions {
+        align-self: flex-start;
+    }
+
     .activity-time {
         width: 65px;
 
@@ -597,7 +610,8 @@
     }
 
     .empty-day .day-add-activity-button {
-        width: 100%;
+        width: auto;
+        align-self: flex-end;
     }
 
     .day-add-activity-wrapper {

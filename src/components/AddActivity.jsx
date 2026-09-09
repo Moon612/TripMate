@@ -1,7 +1,10 @@
 import { useContext, useState } from "react";
 
 import AuthContext from "../context/AuthContext";
-import { addActivity } from "../services/activityService";
+import {
+    addActivity,
+    updateActivity
+} from "../services/activityService";
 
 import "./AddActivity.css";
 
@@ -10,18 +13,20 @@ function AddActivity({
     tripId,
     selectedDate,
     selectedDay,
+    activityToEdit,
     onActivityAdded,
+    onActivityUpdated,
     onClose
 }) {
 
     const { currentUser } = useContext(AuthContext);
 
 
-    const [title, setTitle] = useState("");
-    const [type, setType] = useState("Sightseeing");
-    const [time, setTime] = useState("");
-    const [location, setLocation] = useState("");
-    const [notes, setNotes] = useState("");
+    const [title, setTitle] = useState(activityToEdit?.title || "");
+    const [type, setType] = useState(activityToEdit?.type || "Sightseeing");
+    const [time, setTime] = useState(activityToEdit?.time || "");
+    const [location, setLocation] = useState(activityToEdit?.location || "");
+    const [notes, setNotes] = useState(activityToEdit?.notes || "");
 
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState("");
@@ -82,14 +87,27 @@ function AddActivity({
             };
 
 
-            const newActivity = await addActivity(
-                currentUser.uid,
-                tripId,
-                activity
-            );
+            if (activityToEdit) {
+                await updateActivity(
+                    currentUser.uid,
+                    tripId,
+                    activityToEdit.id,
+                    activity
+                );
 
+                onActivityUpdated({
+                    ...activityToEdit,
+                    ...activity
+                });
+            } else {
+                const newActivity = await addActivity(
+                    currentUser.uid,
+                    tripId,
+                    activity
+                );
 
-            onActivityAdded(newActivity);
+                onActivityAdded(newActivity);
+            }
 
 
         } catch (error) {
@@ -128,11 +146,13 @@ function AddActivity({
                         </span>
 
                         <h2>
-                            Add Activity
+                            {activityToEdit ? "Edit Activity" : "Add Activity"}
                         </h2>
 
                         <p>
-                            Add something to your day.
+                            {activityToEdit
+                                ? "Update the details for this activity."
+                                : "Add something to your day."}
                         </p>
 
                     </div>
@@ -332,8 +352,12 @@ function AddActivity({
                         >
 
                             {saving
-                                ? "Adding..."
-                                : "Add Activity"}
+                                ? activityToEdit
+                                    ? "Saving..."
+                                    : "Adding..."
+                                : activityToEdit
+                                    ? "Save Changes"
+                                    : "Add Activity"}
 
                         </button>
 

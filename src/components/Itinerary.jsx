@@ -1,14 +1,19 @@
 import { useContext, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import { Pencil, Trash2 } from "lucide-react";
 
 import AuthContext from "../context/AuthContext";
 import { getTrip } from "../services/tripService";
-import { getActivities } from "../services/activityService";
+import {
+    deleteActivity,
+    getActivities
+} from "../services/activityService";
 import { formatDate } from "../utils/dateUtils";
+import { toLocalCalendarDate } from "../utils/tripUtils";
 
 import AddActivity from "./AddActivity";
 
-import "./itinerary.css";
+import "./Itinerary.css";
 
 
 function Itinerary() {
@@ -26,6 +31,9 @@ function Itinerary() {
     const [selectedDay, setSelectedDay] = useState(null);
 
     const [showAddActivity, setShowAddActivity] = useState(false);
+    const [activityToEdit, setActivityToEdit] = useState(null);
+    const [deletingActivityId, setDeletingActivityId] = useState(null);
+    const [activityActionError, setActivityActionError] = useState("");
 
 
     useEffect(() => {
@@ -77,28 +85,6 @@ function Itinerary() {
 
 
     /*
-     * Convert Firebase dates, strings, or normal
-     * JavaScript dates into a Date object.
-     */
-    const convertToDate = (value) => {
-
-        if (!value) {
-            return null;
-        }
-
-        if (value?.toDate) {
-            return value.toDate();
-        }
-
-        if (value instanceof Date) {
-            return value;
-        }
-
-        return new Date(value);
-    };
-
-
-    /*
      * Creates YYYY-MM-DD.
      *
      * We use this format for activity dates because
@@ -130,8 +116,8 @@ function Itinerary() {
             return [];
         }
 
-        const startDate = convertToDate(trip.startDate);
-        const endDate = convertToDate(trip.endDate);
+        const startDate = toLocalCalendarDate(trip.startDate);
+        const endDate = toLocalCalendarDate(trip.endDate);
 
         if (!startDate || !endDate) {
             return [];
@@ -170,8 +156,13 @@ function Itinerary() {
      */
     const openAddActivity = (date, dayNumber) => {
 
+        if (isTripCompleted) {
+            return;
+        }
+
         setSelectedDate(date);
         setSelectedDay(dayNumber);
+        setActivityToEdit(null);
 
         setShowAddActivity(true);
     };
@@ -186,6 +177,7 @@ function Itinerary() {
 
         setSelectedDate("");
         setSelectedDay(null);
+        setActivityToEdit(null);
     };
 
 
@@ -205,21 +197,66 @@ function Itinerary() {
     };
 
 
-    /*
-     * Returns all activities belonging to
-     * a particular date.
-     */
-    const getActivitiesForDay = (date) => {
+    const openEditActivity = (activity, dayNumber) => {
 
-        return activities
-            .filter((activity) => activity.date === date)
-            .sort((a, b) => {
+        if (isTripCompleted) {
+            return;
+        }
 
-                return (a.time || "").localeCompare(
-                    b.time || ""
-                );
+        setSelectedDate(activity.date);
+        setSelectedDay(dayNumber);
+        setActivityToEdit(activity);
+        setShowAddActivity(true);
+    };
 
-            });
+
+    const handleActivityUpdated = (updatedActivity) => {
+
+        setActivities((currentActivities) =>
+            currentActivities.map((activity) =>
+                activity.id === updatedActivity.id
+                    ? updatedActivity
+                    : activity
+            )
+        );
+
+        closeAddActivity();
+    };
+
+
+    const handleDeleteActivity = async (activity) => {
+
+        const shouldDelete = window.confirm(
+            `Delete "${activity.title}" from your itinerary?`
+        );
+
+        if (!shouldDelete) {
+            return;
+        }
+
+        setActivityActionError("");
+        setDeletingActivityId(activity.id);
+
+        try {
+            await deleteActivity(
+                currentUser.uid,
+                tripId,
+                activity.id
+            );
+
+            setActivities((currentActivities) =>
+                currentActivities.filter(
+                    (currentActivity) => currentActivity.id !== activity.id
+                )
+            );
+        } catch (error) {
+            console.error("Failed to delete activity:", error);
+            setActivityActionError(
+                "Unable to delete the activity. Please try again."
+            );
+        } finally {
+            setDeletingActivityId(null);
+        }
     };
 
 
@@ -262,6 +299,12 @@ function Itinerary() {
 
 
     const tripDays = getTripDays();
+
+    const tripEndDate = toLocalCalendarDate(trip.endDate);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const isTripCompleted = tripEndDate && tripEndDate < today;
 
 
     return (
@@ -336,7 +379,7 @@ function Itinerary() {
 
                 {/* Top add button */}
 
-                {tripDays.length > 0 && (
+                {!isTripCompleted && tripDays.length > 0 && (
 
                     <button
                         type="button"
@@ -363,6 +406,12 @@ function Itinerary() {
             {/* All trip days */}
 
             <section className="itinerary-section">
+
+                {activityActionError && (
+                    <p className="itinerary-action-error" role="alert">
+                        {activityActionError}
+                    </p>
+                )}
 
                 <div className="itinerary-days">
 
@@ -436,6 +485,41 @@ function Itinerary() {
 
                                                     </div>
 
+                                                    <div className="activity-actions">
+                                                        {!isTripCompleted && (
+                                                            <button
+                                                                type="button"
+                                                                className="activity-action-button"
+                                                                aria-label={`Edit ${activity.title}`}
+                                                                title="Edit activity"
+                                                                onClick={() =>
+                                                                    openEditActivity(
+                                                                        activity,
+                                                                        day.dayNumber
+                                                                    )
+                                                                }
+                                                            >
+                                                                <Pencil size={16} />
+                                                            </button>
+                                                        )}
+
+                                                        <button
+                                                            type="button"
+                                                            className="activity-action-button activity-delete-button"
+                                                            aria-label={`Delete ${activity.title}`}
+                                                            title="Delete activity"
+                                                            disabled={
+                                                                deletingActivityId ===
+                                                                activity.id
+                                                            }
+                                                            onClick={() =>
+                                                                handleDeleteActivity(activity)
+                                                            }
+                                                        >
+                                                            <Trash2 size={16} />
+                                                        </button>
+                                                    </div>
+
                                                 </div>
 
                                             ))}
@@ -444,20 +528,24 @@ function Itinerary() {
 
 
                                         {/* Add another activity to this day */}
-                                        <div className="day-add-activity-wrapper">
+                                        {!isTripCompleted && (
+                                            <div className="day-add-activity-wrapper">
 
-                                            <button
-                                                type="button"
-                                                className="day-add-activity-button"
-                                                onClick={() => {
-                                                    setSelectedDate(day.date);
-                                                    setShowAddActivity(true);
-                                                }}
-                                            >
-                                                + Add Activity
-                                            </button>
+                                                <button
+                                                    type="button"
+                                                    className="day-add-activity-button"
+                                                    onClick={() =>
+                                                        openAddActivity(
+                                                            day.date,
+                                                            day.dayNumber
+                                                        )
+                                                    }
+                                                >
+                                                    + Add Activity
+                                                </button>
 
-                                        </div>
+                                            </div>
+                                        )}
 
                                     </>
 
@@ -484,16 +572,20 @@ function Itinerary() {
 
                                         </div>
 
-                                        <button
-                                            type="button"
-                                            className="day-add-activity-button"
-                                            onClick={() => {
-                                                setSelectedDate(day.date);
-                                                setShowAddActivity(true);
-                                            }}
-                                        >
-                                            + Add Activity
-                                        </button>
+                                        {!isTripCompleted && (
+                                            <button
+                                                type="button"
+                                                className="day-add-activity-button"
+                                                onClick={() =>
+                                                    openAddActivity(
+                                                        day.date,
+                                                        day.dayNumber
+                                                    )
+                                                }
+                                            >
+                                                + Add Activity
+                                            </button>
+                                        )}
 
                                     </div>
 
@@ -516,7 +608,9 @@ function Itinerary() {
                     tripId={tripId}
                     selectedDate={selectedDate}
                     selectedDay={selectedDay}
+                    activityToEdit={activityToEdit}
                     onActivityAdded={handleActivityAdded}
+                    onActivityUpdated={handleActivityUpdated}
                     onClose={closeAddActivity}
                 />
 
