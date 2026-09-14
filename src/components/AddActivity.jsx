@@ -56,6 +56,34 @@ function AddActivity({
     };
 
 
+    /*
+     * Finds the latitude and longitude for
+     * the location entered by the user.
+     */
+    const getLocationCoordinates = async (locationName) => {
+
+        const searchUrl =
+            `https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&q=${encodeURIComponent(locationName)}`;
+
+        const response = await fetch(searchUrl);
+
+        if (!response.ok) {
+            throw new Error("Location search failed.");
+        }
+
+        const results = await response.json();
+
+        if (results.length === 0) {
+            return null;
+        }
+
+        return {
+            latitude: Number(results[0].lat),
+            longitude: Number(results[0].lon)
+        };
+    };
+
+
     const handleSubmit = async (event) => {
 
         event.preventDefault();
@@ -65,6 +93,31 @@ function AddActivity({
 
 
         try {
+
+            const cleanLocation = location.trim();
+
+            if (!cleanLocation) {
+                setError("Please enter a location.");
+                setSaving(false);
+                return;
+            }
+
+
+            // Find coordinates for the activity location.
+            const coordinates = await getLocationCoordinates(
+                cleanLocation
+            );
+
+
+            if (!coordinates) {
+                setError(
+                    "We couldn't find that location. Try adding the city or country."
+                );
+
+                setSaving(false);
+                return;
+            }
+
 
             const activity = {
 
@@ -81,13 +134,18 @@ function AddActivity({
 
                 time,
 
-                location: location.trim(),
+                location: cleanLocation,
 
-                notes: notes.trim()
+                notes: notes.trim(),
+
+                latitude: coordinates.latitude,
+
+                longitude: coordinates.longitude
             };
 
 
             if (activityToEdit) {
+
                 await updateActivity(
                     currentUser.uid,
                     tripId,
@@ -99,7 +157,9 @@ function AddActivity({
                     ...activityToEdit,
                     ...activity
                 });
+
             } else {
+
                 const newActivity = await addActivity(
                     currentUser.uid,
                     tripId,
@@ -113,12 +173,12 @@ function AddActivity({
         } catch (error) {
 
             console.error(
-                "Failed to add activity:",
+                "Failed to save activity:",
                 error
             );
 
             setError(
-                "Failed to add activity. Please try again."
+                "Failed to save activity. Please try again."
             );
 
         } finally {
@@ -146,7 +206,9 @@ function AddActivity({
                         </span>
 
                         <h2>
-                            {activityToEdit ? "Edit Activity" : "Add Activity"}
+                            {activityToEdit
+                                ? "Edit Activity"
+                                : "Add Activity"}
                         </h2>
 
                         <p>
@@ -290,7 +352,7 @@ function AddActivity({
                         <input
                             id="activity-location"
                             type="text"
-                            placeholder="e.g. City Palace"
+                            placeholder="e.g. City Palace, Jaipur"
                             value={location}
                             onChange={(event) =>
                                 setLocation(event.target.value)

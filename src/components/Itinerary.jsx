@@ -12,6 +12,7 @@ import { formatDate } from "../utils/dateUtils";
 import { toLocalCalendarDate } from "../utils/tripUtils";
 
 import AddActivity from "./AddActivity";
+import ActivityMap from "./ActivityMap";
 
 import "./Itinerary.css";
 
@@ -238,6 +239,7 @@ function Itinerary() {
         setDeletingActivityId(activity.id);
 
         try {
+
             await deleteActivity(
                 currentUser.uid,
                 tripId,
@@ -249,12 +251,17 @@ function Itinerary() {
                     (currentActivity) => currentActivity.id !== activity.id
                 )
             );
+
         } catch (error) {
+
             console.error("Failed to delete activity:", error);
+
             setActivityActionError(
                 "Unable to delete the activity. Please try again."
             );
+
         } finally {
+
             setDeletingActivityId(null);
         }
     };
@@ -302,6 +309,7 @@ function Itinerary() {
 
     const tripEndDate = toLocalCalendarDate(trip.endDate);
     const today = new Date();
+
     today.setHours(0, 0, 0, 0);
 
     const isTripCompleted = tripEndDate && tripEndDate < today;
@@ -408,7 +416,10 @@ function Itinerary() {
             <section className="itinerary-section">
 
                 {activityActionError && (
-                    <p className="itinerary-action-error" role="alert">
+                    <p
+                        className="itinerary-action-error"
+                        role="alert"
+                    >
                         {activityActionError}
                     </p>
                 )}
@@ -417,9 +428,19 @@ function Itinerary() {
 
                     {tripDays.map((day, index) => {
 
-                        const dayActivities = activities.filter(
-                            (activity) => activity.date === day.date
-                        );
+                        const dayActivities = activities
+                            .filter(
+                                (activity) =>
+                                    activity.date === day.date
+                            )
+                            .sort(
+                                (firstActivity, secondActivity) =>
+                                    (
+                                        firstActivity.time || ""
+                                    ).localeCompare(
+                                        secondActivity.time || ""
+                                    )
+                            );
 
                         return (
                             <div
@@ -428,9 +449,11 @@ function Itinerary() {
                             >
 
                                 {/* Day header */}
+
                                 <div className="itinerary-day-header">
 
                                     <div>
+
                                         <span className="day-label">
                                             DAY {index + 1}
                                         </span>
@@ -438,97 +461,144 @@ function Itinerary() {
                                         <h3>
                                             {formatDate(day.date)}
                                         </h3>
+
                                     </div>
 
                                     <span className="day-activity-count">
+
                                         {dayActivities.length}{" "}
+
                                         {dayActivities.length === 1
                                             ? "activity"
                                             : "activities"}
+
                                     </span>
 
                                 </div>
 
 
                                 {/* Activities for this day */}
+
                                 {dayActivities.length > 0 ? (
 
                                     <>
+
                                         <div className="activities-list">
 
-                                            {dayActivities.map((activity) => (
+                                            {dayActivities.map(
+                                                (activity) => (
 
-                                                <div
-                                                    key={activity.id}
-                                                    className="activity-item"
-                                                >
+                                                    <div
+                                                        key={activity.id}
+                                                        className="activity-item"
+                                                    >
 
-                                                    <div className="activity-time">
-                                                        {activity.time}
-                                                    </div>
+                                                        <div className="activity-time">
 
-                                                    <div className="activity-content">
+                                                            {activity.time}
 
-                                                        <h3>
-                                                            {activity.title}
-                                                        </h3>
+                                                        </div>
 
-                                                        <p>
-                                                            📍 {activity.location}
-                                                        </p>
 
-                                                        {activity.notes && (
-                                                            <span className="activity-notes">
-                                                                {activity.notes}
-                                                            </span>
-                                                        )}
+                                                        <div className="activity-content">
 
-                                                    </div>
+                                                            <h3>
+                                                                {activity.title}
+                                                            </h3>
 
-                                                    <div className="activity-actions">
-                                                        {!isTripCompleted && (
+
+                                                            <p>
+                                                                📍{" "}
+                                                                {activity.location}
+                                                            </p>
+
+
+                                                            {/* Activity map */}
+
+                                                            <ActivityMap
+                                                                latitude={
+                                                                    activity.latitude
+                                                                }
+                                                                longitude={
+                                                                    activity.longitude
+                                                                }
+                                                                location={
+                                                                    activity.location
+                                                                }
+                                                            />
+
+
+                                                            {activity.notes && (
+
+                                                                <span className="activity-notes">
+
+                                                                    {activity.notes}
+
+                                                                </span>
+
+                                                            )}
+
+                                                        </div>
+
+
+                                                        <div className="activity-actions">
+
+                                                            {!isTripCompleted && (
+
+                                                                <button
+                                                                    type="button"
+                                                                    className="activity-action-button"
+                                                                    aria-label={`Edit ${activity.title}`}
+                                                                    title="Edit activity"
+                                                                    onClick={() =>
+                                                                        openEditActivity(
+                                                                            activity,
+                                                                            day.dayNumber
+                                                                        )
+                                                                    }
+                                                                >
+
+                                                                    <Pencil size={16} />
+
+                                                                </button>
+
+                                                            )}
+
+
                                                             <button
                                                                 type="button"
-                                                                className="activity-action-button"
-                                                                aria-label={`Edit ${activity.title}`}
-                                                                title="Edit activity"
+                                                                className="activity-action-button activity-delete-button"
+                                                                aria-label={`Delete ${activity.title}`}
+                                                                title="Delete activity"
+                                                                disabled={
+                                                                    deletingActivityId ===
+                                                                    activity.id
+                                                                }
                                                                 onClick={() =>
-                                                                    openEditActivity(
-                                                                        activity,
-                                                                        day.dayNumber
+                                                                    handleDeleteActivity(
+                                                                        activity
                                                                     )
                                                                 }
                                                             >
-                                                                <Pencil size={16} />
-                                                            </button>
-                                                        )}
 
-                                                        <button
-                                                            type="button"
-                                                            className="activity-action-button activity-delete-button"
-                                                            aria-label={`Delete ${activity.title}`}
-                                                            title="Delete activity"
-                                                            disabled={
-                                                                deletingActivityId ===
-                                                                activity.id
-                                                            }
-                                                            onClick={() =>
-                                                                handleDeleteActivity(activity)
-                                                            }
-                                                        >
-                                                            <Trash2 size={16} />
-                                                        </button>
+                                                                <Trash2 size={16} />
+
+                                                            </button>
+
+                                                        </div>
+
                                                     </div>
 
-                                                </div>
-
-                                            ))}
+                                                )
+                                            )}
 
                                         </div>
 
 
                                         {/* Add another activity to this day */}
+
                                         {!isTripCompleted && (
+
                                             <div className="day-add-activity-wrapper">
 
                                                 <button
@@ -545,6 +615,7 @@ function Itinerary() {
                                                 </button>
 
                                             </div>
+
                                         )}
 
                                     </>
@@ -552,6 +623,7 @@ function Itinerary() {
                                 ) : (
 
                                     /* Empty day */
+
                                     <div className="empty-day">
 
                                         <div className="empty-day-content">
@@ -561,6 +633,7 @@ function Itinerary() {
                                             </div>
 
                                             <div>
+
                                                 <strong>
                                                     No activities planned
                                                 </strong>
@@ -568,11 +641,14 @@ function Itinerary() {
                                                 <p>
                                                     Add your first activity for this day.
                                                 </p>
+
                                             </div>
 
                                         </div>
 
+
                                         {!isTripCompleted && (
+
                                             <button
                                                 type="button"
                                                 className="day-add-activity-button"
@@ -585,6 +661,7 @@ function Itinerary() {
                                             >
                                                 + Add Activity
                                             </button>
+
                                         )}
 
                                     </div>
