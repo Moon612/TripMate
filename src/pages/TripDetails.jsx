@@ -4,6 +4,7 @@ import AuthContext from "../context/AuthContext";
 import { getTrip, updateTrip, deleteTrip } from "../services/tripService";
 import { formatDate } from "../utils/dateUtils";
 import TripInfoCard from "../components/TripInfoCard";
+import useOnline from "../hooks/useOnline";
 import "./TripDetails.css";
 import countries from "../data/countries";
 
@@ -13,7 +14,7 @@ function TripDetails() {
     const navigate = useNavigate();
 
     const [trip, setTrip] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
 
     const [isEditing, setIsEditing] = useState(false);
 
@@ -21,8 +22,16 @@ function TripDetails() {
     const [country, setCountry] = useState("");
     const [travelers, setTravelers] = useState(1);
 
+    const isOnline = useOnline();
+
     useEffect(() => {
         const loadTrip = async () => {
+            if (!currentUser || !tripId || !isOnline) {
+                return;
+            }
+
+            setLoading(true);
+
             try {
                 const data = await getTrip(currentUser.uid, tripId);
 
@@ -40,10 +49,8 @@ function TripDetails() {
             }
         };
 
-        if (currentUser && tripId) {
-            loadTrip();
-        }
-    }, [currentUser, tripId]);
+        loadTrip();
+    }, [currentUser, tripId, isOnline]);
 
     if (loading) {
         return (
@@ -51,6 +58,20 @@ function TripDetails() {
                 <div className="loading-spinner"></div>
 
                 <p>Loading trip...</p>
+            </div>
+        );
+    }
+
+    if (!isOnline && !trip) {
+        return (
+            <div className="trip-details-loading">
+                <div className="offline-icon">⌁</div>
+
+                <h3>You're offline</h3>
+
+                <p>
+                    Connect to the internet to load this trip.
+                </p>
             </div>
         );
     }
@@ -130,6 +151,12 @@ function TripDetails() {
     return (
         <div className="trip-details">
 
+            {!isOnline && (
+                <div className="offline-message">
+                    You're offline. Your trip will refresh automatically when you're back online.
+                </div>
+            )}
+
             <Link
                 to="/trips"
                 className="back-link"
@@ -203,7 +230,7 @@ function TripDetails() {
                             Country
                         </label>
 
-                       <select
+                        <select
                             value={country}
                             onChange={(event) =>
                                 setCountry(event.target.value)
@@ -220,6 +247,7 @@ function TripDetails() {
                                     {countryName}
                                 </option>
                             ))}
+
                         </select>
 
                     </div>

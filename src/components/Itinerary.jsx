@@ -10,6 +10,7 @@ import {
 } from "../services/activityService";
 import { formatDate } from "../utils/dateUtils";
 import { toLocalCalendarDate } from "../utils/tripUtils";
+import useOnline from "../hooks/useOnline";
 
 import AddActivity from "./AddActivity";
 import ActivityMap from "./ActivityMap";
@@ -25,9 +26,8 @@ function Itinerary() {
     const [trip, setTrip] = useState(null);
     const [activities, setActivities] = useState([]);
 
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
 
-    // Stores the day that the user wants to add an activity to
     const [selectedDate, setSelectedDate] = useState("");
     const [selectedDay, setSelectedDay] = useState(null);
 
@@ -36,10 +36,18 @@ function Itinerary() {
     const [deletingActivityId, setDeletingActivityId] = useState(null);
     const [activityActionError, setActivityActionError] = useState("");
 
+    const isOnline = useOnline();
+
 
     useEffect(() => {
 
         const loadItinerary = async () => {
+
+            if (!currentUser || !tripId || !isOnline) {
+                return;
+            }
+
+            setLoading(true);
 
             try {
 
@@ -78,11 +86,9 @@ function Itinerary() {
         };
 
 
-        if (currentUser && tripId) {
-            loadItinerary();
-        }
+        loadItinerary();
 
-    }, [currentUser, tripId]);
+    }, [currentUser, tripId, isOnline]);
 
 
     /*
@@ -283,6 +289,28 @@ function Itinerary() {
     }
 
 
+    if (!isOnline && !trip) {
+
+        return (
+            <div className="itinerary-loading">
+
+                <div className="offline-icon">
+                    ⌁
+                </div>
+
+                <h3>
+                    You're offline
+                </h3>
+
+                <p>
+                    Connect to the internet to load your itinerary.
+                </p>
+
+            </div>
+        );
+    }
+
+
     if (!trip) {
 
         return (
@@ -317,6 +345,13 @@ function Itinerary() {
 
     return (
         <div className="itinerary-page">
+
+            {!isOnline && (
+                <div className="offline-message">
+                    You're offline. Your itinerary will refresh automatically when you're back online.
+                </div>
+            )}
+
 
             {/* Back to trip details */}
 

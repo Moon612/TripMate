@@ -4,37 +4,56 @@ import AuthContext from "../context/AuthContext";
 import { getTrips } from "../services/tripService";
 import { categorizeTrips } from "../utils/tripUtils";
 import TripCard from "../components/TripCard";
+import useOnline from "../hooks/useOnline";
 import "./MyTrips.css";
 
 function MyTrips() {
     const { currentUser } = useContext(AuthContext);
 
     const [trips, setTrips] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const [activeFilter, setActiveFilter] = useState("all");
 
-    useEffect(() => {
-        const loadTrips = async () => {
-            try {
-                const data = await getTrips(currentUser.uid);
-                setTrips(data);
-            } catch (error) {
-                console.error("Failed to load trips:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
+    const isOnline = useOnline();
 
-        if (currentUser) {
+    const loadTrips = async () => {
+        if (!currentUser || !isOnline) {
+            return;
+        }
+
+        setLoading(true);
+
+        try {
+            const data = await getTrips(currentUser.uid);
+            setTrips(data);
+        } catch (error) {
+            console.error("Failed to load trips:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        if (currentUser && isOnline) {
             loadTrips();
         }
-    }, [currentUser]);
+    }, [currentUser, isOnline]);
 
     if (loading) {
         return (
             <div className="my-trips-loading">
                 <div className="loading-spinner"></div>
                 <p>Loading your trips...</p>
+            </div>
+        );
+    }
+
+    if (!isOnline && trips.length === 0) {
+        return (
+            <div className="my-trips-loading">
+                <div className="offline-icon">⌁</div>
+                <h3>You're offline</h3>
+                <p>Connect to the internet to load your trips.</p>
             </div>
         );
     }
@@ -59,8 +78,16 @@ function MyTrips() {
         displayedTrips = pastTrips;
     }
 
+    const showOfflineMessage = !isOnline && trips.length > 0;
+
     return (
         <div className="my-trips">
+
+            {showOfflineMessage && (
+                <div className="offline-message">
+                    You're offline. Your trips will refresh automatically when you're back online.
+                </div>
+            )}
 
             <section className="my-trips-header">
 
