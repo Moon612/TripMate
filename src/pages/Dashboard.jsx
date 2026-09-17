@@ -7,38 +7,89 @@ import { formatDate } from "../utils/dateUtils";
 import { Link } from "react-router-dom";
 import AuthContext from "../context/AuthContext";
 import { categorizeTrips } from "../utils/tripUtils";
+import useOnline from "../hooks/useOnline";
+
 
 function Dashboard() {
     const { currentUser } = useContext(AuthContext);
 
     const [trips, setTrips] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
+
+    const isOnline = useOnline();
+
+
+    const loadTrips = async () => {
+
+        if (!currentUser || !isOnline) {
+            return;
+        }
+
+        setLoading(true);
+
+        try {
+
+            const data = await getTrips(currentUser.uid);
+            setTrips(data);
+
+        } catch (error) {
+
+            console.error("Failed to load trips", error);
+
+        } finally {
+
+            setLoading(false);
+
+        }
+    };
+
 
     useEffect(() => {
-        const loadTrips = async () => {
-            try {
-                const data = await getTrips(currentUser.uid);
-                setTrips(data);
-            } catch (error) {
-                console.error("Failed to load trips", error);
-            } finally {
-                setLoading(false);
-            }
-        };
 
-        if (currentUser) {
+        if (currentUser && isOnline) {
             loadTrips();
         }
-    }, [currentUser]);
+
+    }, [currentUser, isOnline]);
+
 
     if (loading) {
+
         return (
             <div className="dashboard-loading">
+
                 <div className="loading-spinner"></div>
-                <p>Loading your trips...</p>
+
+                <p>
+                    Loading your trips...
+                </p>
+
             </div>
         );
     }
+
+
+    if (!isOnline && trips.length === 0) {
+
+        return (
+            <div className="dashboard-loading">
+
+                <div className="offline-icon">
+                    ⌁
+                </div>
+
+                <h3>
+                    You're offline
+                </h3>
+
+                <p>
+                    Connect to the internet to load your dashboard.
+                </p>
+
+            </div>
+        );
+    }
+
 
     const {
         ongoingTrips,
@@ -46,33 +97,53 @@ function Dashboard() {
         pastTrips
     } = categorizeTrips(trips);
 
+
     const totalTravelers = trips.reduce((total, trip) => {
         return total + trip.travelers;
     }, 0);
 
+
+    const showOfflineMessage = !isOnline && trips.length > 0;
+
+
     return (
         <div className="dashboard">
+
+            {showOfflineMessage && (
+                <div className="offline-message">
+                    You're offline. Your dashboard will refresh automatically when you're back online.
+                </div>
+            )}
+
 
             <section className="dashboard-welcome">
 
                 <div className="welcome-content">
+
                     <span className="welcome-label">
                         YOUR TRAVEL DASHBOARD
                     </span>
 
-                    <h1>Good Morning! 👋</h1>
+                    <h1>
+                        Good Morning! 👋
+                    </h1>
 
                     <p>
                         Plan your next adventure and keep all your trips
                         organized in one place.
                     </p>
+
                 </div>
+
 
                 <Link
                     to="/trips/new"
                     className="add-trip-button"
                 >
-                    <span>+</span>
+                    <span>
+                        +
+                    </span>
+
                     Add New Trip
                 </Link>
 
@@ -82,7 +153,10 @@ function Dashboard() {
             <section className="stats-grid">
 
                 <div className="dashboard-stat">
-                    <div className="stat-icon">✈️</div>
+
+                    <div className="stat-icon">
+                        ✈️
+                    </div>
 
                     <StatCard
                         title="Total Trips"
@@ -92,11 +166,15 @@ function Dashboard() {
                     <p className="stat-description">
                         All your adventures
                     </p>
+
                 </div>
 
 
                 <div className="dashboard-stat">
-                    <div className="stat-icon">📅</div>
+
+                    <div className="stat-icon">
+                        📅
+                    </div>
 
                     <StatCard
                         title="Upcoming Trips"
@@ -106,11 +184,15 @@ function Dashboard() {
                     <p className="stat-description">
                         Adventures waiting for you
                     </p>
+
                 </div>
 
 
                 <div className="dashboard-stat">
-                    <div className="stat-icon">👥</div>
+
+                    <div className="stat-icon">
+                        👥
+                    </div>
 
                     <StatCard
                         title="Travelers"
@@ -120,6 +202,7 @@ function Dashboard() {
                     <p className="stat-description">
                         Total travelers across trips
                     </p>
+
                 </div>
 
             </section>
@@ -130,11 +213,15 @@ function Dashboard() {
                 <div className="section-header">
 
                     <div>
+
                         <span className="section-label">
                             RIGHT NOW
                         </span>
 
-                        <h2>Your Trip Now</h2>
+                        <h2>
+                            Your Trip Now
+                        </h2>
+
                     </div>
 
                 </div>
@@ -155,8 +242,11 @@ function Dashboard() {
                                 <div className="trip-card-top">
 
                                     <span className="trip-live">
+
                                         <span className="live-dot"></span>
+
                                         LIVE
+
                                     </span>
 
                                     <span className="trip-arrow">
@@ -186,21 +276,29 @@ function Dashboard() {
                                 <div className="current-trip-info">
 
                                     <div>
-                                        <span>Date</span>
+
+                                        <span>
+                                            Date
+                                        </span>
 
                                         <p>
                                             {formatDate(trip.startDate)} -{" "}
                                             {formatDate(trip.endDate)}
                                         </p>
+
                                     </div>
 
 
                                     <div>
-                                        <span>Travelers</span>
+
+                                        <span>
+                                            Travelers
+                                        </span>
 
                                         <p>
                                             {trip.travelers} people
                                         </p>
+
                                     </div>
 
                                 </div>
@@ -252,6 +350,7 @@ function Dashboard() {
                 <div className="section-header">
 
                     <div>
+
                         <span className="section-label">
                             COMING UP
                         </span>
@@ -259,6 +358,7 @@ function Dashboard() {
                         <h2>
                             Upcoming Trips
                         </h2>
+
                     </div>
 
 
@@ -301,6 +401,7 @@ function Dashboard() {
                         </div>
 
                         <div>
+
                             <h3>
                                 No upcoming trips yet
                             </h3>
@@ -308,6 +409,7 @@ function Dashboard() {
                             <p>
                                 Start planning your next destination.
                             </p>
+
                         </div>
 
                         <Link
@@ -325,9 +427,11 @@ function Dashboard() {
 
 
             {pastTrips.length > 0 && (
+
                 <section className="dashboard-summary">
 
                     <div>
+
                         <span className="section-label">
                             YOUR JOURNEY
                         </span>
@@ -341,6 +445,7 @@ function Dashboard() {
                             Keep exploring and add your next adventure
                             to your journey.
                         </p>
+
                     </div>
 
                     <Link
@@ -351,6 +456,7 @@ function Dashboard() {
                     </Link>
 
                 </section>
+
             )}
 
         </div>

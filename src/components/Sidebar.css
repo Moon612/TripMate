@@ -11,7 +11,7 @@
     padding: 28px 16px;
 
     background-color: #ffffff;
-    border-right: 1px solid #e2e8f0;
+    border-right: 1px solid #d9e2ec;
 }
 
 .sidebar-content {
@@ -25,7 +25,7 @@
     font-weight: 600;
     letter-spacing: 0.08em;
 
-    color: #94a3b8;
+    color: #829ab1;
 }
 
 .sidebar-nav {
@@ -43,20 +43,20 @@
 
     border-radius: 10px;
 
-    color: #64748b;
+    color: #627d98;
     font-size: 14px;
 
     transition: 0.2s ease;
 }
 
 .nav-item:hover {
-    background-color: #f1f5f9;
-    color: #0f172a;
+    background-color: #f1f5f8;
+    color: #163a5f;
 }
 
 .nav-item.active {
-    background-color: #eef2f7;
-    color: #0f172a;
+    background-color: #eaf1f7;
+    color: #163a5f;
     font-weight: 600;
 }
 
@@ -73,5 +73,5 @@
 
     padding-top: 16px;
 
-    border-top: 1px solid #e2e8f0;
+    border-top: 1px solid #d9e2ec;
 }

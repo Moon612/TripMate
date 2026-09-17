@@ -5,24 +5,25 @@
 }
 
 :root {
-    --primary: #0f172a;
-    --primary-hover: #1e293b;
+    --primary: #163a5f;
+    --primary-hover: #102c49;
+    --primary-soft: #eaf1f7;
 
-    --text-primary: #0f172a;
-    --text-secondary: #64748b;
-    --text-muted: #94a3b8;
+    --text-primary: #102a43;
+    --text-secondary: #627d98;
+    --text-muted: #829ab1;
 
-    --background: #f8fafc;
+    --background: #f7f9fb;
     --surface: #ffffff;
 
-    --border: #e2e8f0;
+    --border: #d9e2ec;
 
     --radius-sm: 8px;
     --radius-md: 12px;
     --radius-lg: 16px;
 
-    --shadow-sm: 0 2px 8px rgba(15, 23, 42, 0.04);
-    --shadow-md: 0 8px 24px rgba(15, 23, 42, 0.06);
+    --shadow-sm: 0 2px 8px rgba(16, 42, 67, 0.04);
+    --shadow-md: 0 8px 24px rgba(16, 42, 67, 0.06);
 
     --transition: 0.2s ease;
 }

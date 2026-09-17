@@ -2,16 +2,16 @@
   padding: 24px;
 
   background-color: white;
-  border: 1px solid #e2e8f0;
+  border: 1px solid #d9e2ec;
   border-radius: 14px;
 
-  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
+  box-shadow: 0 4px 12px rgba(16, 42, 67, 0.05);
 }
 
 .stat-card p {
   margin-bottom: 10px;
 
-  color: #64748b;
+  color: #627d98;
   font-size: 14px;
 }
 

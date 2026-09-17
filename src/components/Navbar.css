@@ -34,7 +34,7 @@
     align-items: center;
     justify-content: center;
 
-    background: #f1f5f9;
+    background: var(--primary-soft);
 
     border-radius: 11px;
 
@@ -44,7 +44,7 @@
 .logo {
     font-size: 19px;
     font-weight: 700;
-    color: var(--text-primary);
+    color: var(--primary);
 
     line-height: 1.2;
 }
@@ -87,7 +87,7 @@
 }
 
 .navbar-user:hover {
-    background: #f8fafc;
+    background: #f7f9fb;
 }
 
 .user-avatar {
@@ -100,9 +100,9 @@
 
     border-radius: 50%;
 
-    background: #e2e8f0;
+    background: var(--primary-soft);
 
-    color: #334155;
+    color: var(--primary);
 
     font-size: 14px;
     font-weight: 700;
@@ -171,7 +171,7 @@
 }
 
 .profile-button:hover {
-    background: #f8fafc;
+    background: #f7f9fb;
     border-color: var(--border-hover);
     color: var(--text-primary);
 }
