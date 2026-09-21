@@ -606,7 +606,7 @@ function Home() {
                         </span>
 
                         <span>
-                            Made for travelers, by travelers. ✈
+                            Made for travelers, by traveler. ✈
                         </span>
 
                     </div>
