@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# This prevents your API key from accidentally being committed to GitHub.
+.env
