@@ -14,19 +14,18 @@ function AddActivity({
     selectedDate,
     selectedDay,
     activityToEdit,
+    nearbyPlace,
     onActivityAdded,
     onActivityUpdated,
     onClose
 }) {
 
     const { currentUser } = useContext(AuthContext);
-
-
-    const [title, setTitle] = useState(activityToEdit?.title || "");
-    const [type, setType] = useState(activityToEdit?.type || "Sightseeing");
-    const [time, setTime] = useState(activityToEdit?.time || "");
-    const [location, setLocation] = useState(activityToEdit?.location || "");
-    const [notes, setNotes] = useState(activityToEdit?.notes || "");
+    const [title, setTitle] = useState( activityToEdit?.title || nearbyPlace?.title || "");
+    const [type, setType] = useState(activityToEdit?.type || nearbyPlace?.type || "Sightseeing" );
+    const [time, setTime] = useState( activityToEdit?.time || "");
+    const [location, setLocation] = useState(activityToEdit?.location || nearbyPlace?.location |"");
+    const [notes, setNotes] = useState( activityToEdit?.notes || "");
 
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState("");
@@ -104,9 +103,22 @@ function AddActivity({
 
 
             // Find coordinates for the activity location.
-            const coordinates = await getLocationCoordinates(
-                cleanLocation
-            );
+            let coordinates;
+
+            if (nearbyPlace?.latitude !== undefined &&
+                nearbyPlace?.longitude !== undefined) {
+
+                coordinates = {
+                    latitude: nearbyPlace.latitude,
+                    longitude: nearbyPlace.longitude
+                };
+
+            } else {
+
+                coordinates = await getLocationCoordinates(
+                    cleanLocation
+                );
+            }
 
 
             if (!coordinates) {

@@ -1,20 +1,15 @@
 import { useContext, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { Pencil, Trash2 } from "lucide-react";
-
 import AuthContext from "../context/AuthContext";
 import { getTrip } from "../services/tripService";
-import {
-    deleteActivity,
-    getActivities
-} from "../services/activityService";
+import {deleteActivity,getActivities} from "../services/activityService";
 import { formatDate } from "../utils/dateUtils";
 import { toLocalCalendarDate } from "../utils/tripUtils";
 import useOnline from "../hooks/useOnline";
-
 import AddActivity from "./AddActivity";
 import ActivityMap from "./ActivityMap";
-
+import NearbyPlaces from "./NearbyPlaces";
 import "./Itinerary.css";
 
 
@@ -33,6 +28,8 @@ function Itinerary() {
 
     const [showAddActivity, setShowAddActivity] = useState(false);
     const [activityToEdit, setActivityToEdit] = useState(null);
+    const [nearbyPlace, setNearbyPlace] = useState(null);
+
     const [deletingActivityId, setDeletingActivityId] = useState(null);
     const [activityActionError, setActivityActionError] = useState("");
 
@@ -181,10 +178,30 @@ function Itinerary() {
     const closeAddActivity = () => {
 
         setShowAddActivity(false);
-
         setSelectedDate("");
         setSelectedDay(null);
         setActivityToEdit(null);
+        setNearByPlace(null);
+    };
+
+    const handleAddNearbyPlace = (place) => {
+        if (isTripCompleted) {
+            return;
+        }
+
+        setSelectedDate(place.date);
+
+        const selectedTripDay = tripDays.find(
+            (day) => day.date === place.date
+        );
+
+        setSelectedDay(
+            selectedTripDay?.dayNumber || null
+        );
+
+        setNearbyPlace(place);
+        setActivityToEdit(null);
+        setShowAddActivity(true);
     };
 
 
@@ -711,6 +728,14 @@ function Itinerary() {
 
             </section>
 
+            {!isTripCompleted && (
+                <NearbyPlaces
+                    trip={trip}
+                    tripDays={tripDays}
+                    onAddPlace={handleAddNearbyPlace}
+                />
+            )}
+
 
             {/* Add Activity modal */}
 
@@ -724,6 +749,7 @@ function Itinerary() {
                     onActivityAdded={handleActivityAdded}
                     onActivityUpdated={handleActivityUpdated}
                     onClose={closeAddActivity}
+                    nearbyPlace={nearbyPlace}
                 />
 
             )}
