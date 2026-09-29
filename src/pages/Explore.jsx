@@ -5,59 +5,111 @@ import { useNavigate } from "react-router-dom";
 import "./Explore.css";
 
 import {
-    searchDestinations,
-    searchDestinationsByCategory
+
+    searchDestinations,
+
+    searchDestinationsByCategory
+
 } from "../services/destinationService";
 
 const popularDestinations = [
-    {
-        name: "Japan",
-        country: "Japan",
-        places: "Tokyo • Kyoto • Osaka",
-        rating: "4.8",
-        category: "Culture",
-        images: [
-            "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=900&q=85",
-            "https://images.unsplash.com/photo-1528360983277-13d401cdc186?auto=format&fit=crop&w=900&q=85",
-            "https://images.unsplash.com/photo-1490806843957-31f4c9a91c91?auto=format&fit=crop&w=900&q=85"
-        ]
-    },
-    {
-        name: "Greece",
-        country: "Greece",
-        places: "Santorini • Athens",
-        rating: "4.9",
-        category: "Beaches",
-        images: [
-            "https://images.unsplash.com/photo-1533105079780-92b9be482077?auto=format&fit=crop&w=900&q=85",
-            "https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?auto=format&fit=crop&w=900&q=85",
-            "https://images.unsplash.com/photo-1601581875309-fafbf2d3ed3a?auto=format&fit=crop&w=900&q=85"
-        ]
-    },
-    {
-        name: "France",
-        country: "France",
-        places: "Paris • Nice • Lyon",
-        rating: "4.9",
-        category: "Cities",
-        images: [
-            "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=900&q=85",
-            "https://images.unsplash.com/photo-1499856871958-5b9627545d1a?auto=format&fit=crop&w=900&q=85",
-            "https://images.unsplash.com/photo-1522093007474-d86e9bf7ba6f?auto=format&fit=crop&w=900&q=85"
-        ]
-    },
-    {
-        name: "Switzerland",
-        country: "Switzerland",
-        places: "Zurich • Interlaken",
-        rating: "4.8",
-        category: "Mountains",
-        images: [
-            "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=900&q=85",
-            "https://images.unsplash.com/photo-1531366936337-7c912a4589a7?auto=format&fit=crop&w=900&q=85",
-            "https://images.unsplash.com/photo-1527668752968-14dc70a27c95?auto=format&fit=crop&w=900&q=85"
-        ]
-    }
+
+    {
+
+        name: "Japan",
+
+        country: "Japan",
+
+        places: "Tokyo • Kyoto • Osaka",
+
+        rating: "4.8",
+
+        category: "Culture",
+
+        images: [
+
+            "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=900&q=85",
+
+            "https://images.unsplash.com/photo-1528360983277-13d401cdc186?auto=format&fit=crop&w=900&q=85",
+
+            "https://images.unsplash.com/photo-1490806843957-31f4c9a91c91?auto=format&fit=crop&w=900&q=85"
+
+        ]
+
+    },
+
+    {
+
+        name: "Greece",
+
+        country: "Greece",
+
+        places: "Santorini • Athens",
+
+        rating: "4.9",
+
+        category: "Beaches",
+
+        images: [
+
+            "https://images.unsplash.com/photo-1533105079780-92b9be482077?auto=format&fit=crop&w=900&q=85",
+
+            "https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?auto=format&fit=crop&w=900&q=85",
+
+            "https://images.unsplash.com/photo-1601581875309-fafbf2d3ed3a?auto=format&fit=crop&w=900&q=85"
+
+        ]
+
+    },
+
+    {
+
+        name: "France",
+
+        country: "France",
+
+        places: "Paris • Nice • Lyon",
+
+        rating: "4.9",
+
+        category: "Cities",
+
+        images: [
+
+            "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=900&q=85",
+
+            "https://images.unsplash.com/photo-1499856871958-5b9627545d1a?auto=format&fit=crop&w=900&q=85",
+
+            "https://images.unsplash.com/photo-1522093007474-d86e9bf7ba6f?auto=format&fit=crop&w=900&q=85"
+
+        ]
+
+    },
+
+    {
+
+        name: "Switzerland",
+
+        country: "Switzerland",
+
+        places: "Zurich • Interlaken",
+
+        rating: "4.8",
+
+        category: "Mountains",
+
+        images: [
+
+            "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=900&q=85",
+
+            "https://images.unsplash.com/photo-1531366936337-7c912a4589a7?auto=format&fit=crop&w=900&q=85",
+
+            "https://images.unsplash.com/photo-1527668752968-14dc70a27c95?auto=format&fit=crop&w=900&q=85"
+
+        ]
+
+    }
+
 ];
 
 const categories = [
@@ -82,7 +134,7 @@ const categories = [
 
 function Explore() {
 
-    const destinationGridRef = useRef(null);
+    const destinationGridRef = useRef(null);
 
     const navigate = useNavigate();
 
@@ -90,9 +142,11 @@ function Explore() {
 
     const [selectedCategory, setSelectedCategory] = useState("All");
 
-    const [categoryDestinations, setCategoryDestinations] = useState([]);
-    const [categoryLoading, setCategoryLoading] = useState(false);
-    const [categoryError, setCategoryError] = useState("");
+    const [categoryDestinations, setCategoryDestinations] = useState([]);
+
+    const [categoryLoading, setCategoryLoading] = useState(false);
+
+    const [categoryError, setCategoryError] = useState("");
 
     const [searchResults, setSearchResults] = useState([]);
 
@@ -110,15 +164,15 @@ function Explore() {
 
     const[currentImageIndex, setCurrentImageIndex] =useState(0);
 
-    const [showAllDestinations, setShowAllDestinations] = useState(false);
+    const [showAllDestinations, setShowAllDestinations] = useState(false);
 
     /*
 
-     \\* This runs while the user is typing.
+     * This runs while the user is typing.
 
-     \\* We wait 500ms before making the API request so that
+     * We wait 500ms before making the API request so that
 
-     \\* we don't send a request for every single key press.
+     * we don't send a request for every single key press.
 
      */
 
@@ -190,56 +244,89 @@ function Explore() {
 
     }, [searchTerm, hasSearched]);
 
-    useEffect(() => {
-        if (selectedCategory === "All") {
-            setCategoryDestinations([]);
-            setCategoryError("");
-            return;
-        }
+    useEffect(() => {
 
-        const controller = new AbortController();
+        if (selectedCategory === "All") {
 
-        const loadCategoryDestinations = async () => {
-            try {
-                setCategoryLoading(true);
-                setCategoryError("");
+            setCategoryDestinations([]);
 
-                const results = await searchDestinationsByCategory(
-                    selectedCategory,
-                    controller.signal
-                );
+            setCategoryError("");
 
-                setCategoryDestinations(results);
-            } catch (error) {
-                if (error.name !== "AbortError") {
-                    console.error(
-                        "Category destination search failed:",
-                        error
-                    );
+            return;
 
-                    setCategoryDestinations([]);
-                    setCategoryError(
-                        "Unable to load destinations for this category."
-                    );
-                }
-            } finally {
-                if (!controller.signal.aborted) {
-                    setCategoryLoading(false);
-                }
-            }
-        };
+        }
 
-        loadCategoryDestinations();
+        const controller = new AbortController();
 
-        return () => {
-            controller.abort();
-        };
-    }, [selectedCategory]);
+        const loadCategoryDestinations = async () => {
 
-    const filteredDestinations =
-        selectedCategory === "All"
-            ? popularDestinations
-            : categoryDestinations;
+            try {
+
+                setCategoryLoading(true);
+
+                setCategoryError("");
+
+                const results = await searchDestinationsByCategory(
+
+                    selectedCategory,
+
+                    controller.signal
+
+                );
+
+                setCategoryDestinations(results);
+
+            } catch (error) {
+
+                if (error.name !== "AbortError") {
+
+                    console.error(
+
+                        "Category destination search failed:",
+
+                        error
+
+                    );
+
+                    setCategoryDestinations([]);
+
+                    setCategoryError(
+
+                        "Unable to load destinations for this category."
+
+                    );
+
+                }
+
+            } finally {
+
+                if (!controller.signal.aborted) {
+
+                    setCategoryLoading(false);
+
+                }
+
+            }
+
+        };
+
+        loadCategoryDestinations();
+
+        return () => {
+
+            controller.abort();
+
+        };
+
+    }, [selectedCategory]);
+
+    const filteredDestinations =
+
+        selectedCategory === "All"
+
+            ? popularDestinations
+
+            : categoryDestinations;
 
     const handleSearch = async (value = searchTerm) => {
 
@@ -316,8 +403,10 @@ function Explore() {
     const handleCategoryClick = (category) => {
 
         setSelectedCategory(category);
-        setCategoryError("");
-        setCategoryDestinations([]);
+
+        setCategoryError("");
+
+        setCategoryDestinations([]);
 
         setSearchTerm("");
 
@@ -331,7 +420,7 @@ function Explore() {
 
         setError("");
 
-        setShowAllDestinations(false);
+        setShowAllDestinations(false);
 
     };
 
@@ -451,24 +540,22 @@ function Explore() {
 
     }, [selectedDestination]);
 
+    const scrollDestinations = (direction) => {
 
-    const handleDestinationMouseMove = (event) => {
-    const container = destinationGridRef.current;
+        const container = destinationGridRef.current;
 
-    if (!container || showAllDestinations) {
-        return;
-    }
+        if (!container) return;
 
-    const rect = container.getBoundingClientRect();
-    const mouseX = event.clientX - rect.left;
-    const edgeSize = 120;
-    if (mouseX > rect.width - edgeSize) {
-        container.scrollLeft += 6;
-    } else if (mouseX < edgeSize) {
-        container.scrollLeft -= 6;
-    }
-};
-    return (
+        container.scrollBy({
+
+            left: direction * container.clientWidth,
+
+            behavior: "smooth"
+
+        });
+
+    };
+return (
 
         <div className="explore-page">
 
@@ -805,11 +892,16 @@ function Explore() {
                         </div>
 
                         <button
-                            className="view-all-button"
-                            onClick={() => setShowAllDestinations(!showAllDestinations)}
-                        >
-                            {showAllDestinations ? "Show Less ←" : "View All →"}
-                        </button>
+
+                            className="view-all-button"
+
+                            onClick={() => setShowAllDestinations(!showAllDestinations)}
+
+                        >
+
+                            {showAllDestinations ? "Show Less ←" : "View All →"}
+
+                        </button>
 
                     </div>
 
@@ -1148,151 +1240,182 @@ function Explore() {
                 </div>
 
                 {categoryLoading ? (
-                    <div className="no-results">
-                        <div className="no-results-icon">⌕</div>
-                        <h3>Loading destinations...</h3>
-                        <p>Finding places that match your interest.</p>
-                    </div>
-                ) : categoryError ? (
-                    <div className="no-results">
-                        <div className="no-results-icon">!</div>
-                        <h3>Something went wrong</h3>
-                        <p>{categoryError}</p>
-                        <button
-                            onClick={() => setSelectedCategory("All")}
-                        >
-                            View Popular Destinations
-                        </button>
-                    </div>
-                ) : filteredDestinations.length > 0 ? (
 
-                    <div
-                        className={
-                            showAllDestinations
-                                ? "destination-grid show-all"
-                                : "destination-grid"
-                        }
-                        ref={destinationGridRef}
-                        onMouseMove={handleDestinationMouseMove}
-                    >
+                    <div className="no-results">
 
-                        {filteredDestinations.map(
+                        <div className="no-results-icon">⌕</div>
 
-                            (destination) => (
+                        <h3>Loading destinations...</h3>
 
-                                <div
+                        <p>Finding places that match your interest.</p>
 
-                                    className="explore-destination-card"
+                    </div>
 
-                                    key={destination.name}
+                ) : categoryError ? (
 
-                                    onClick={() =>
+                    <div className="no-results">
 
-                                        handleDestinationClick(destination)
+                        <div className="no-results-icon">!</div>
 
-                                    }
+                        <h3>Something went wrong</h3>
 
-                                    role="button"
+                        <p>{categoryError}</p>
 
-                                    tabIndex="0"
+                        <button
 
-                                    onKeyDown={(event) => {
+                            onClick={() => setSelectedCategory("All")}
 
-                                        if (event.key === "Enter" || event.key === " ") {
+                        >
 
-                                            handleDestinationClick(destination);
+                            View Popular Destinations
 
-                                        }
+                        </button>
 
-                                    }}
+                    </div>
+
+                ) : filteredDestinations.length > 0 ? (
+
+                        <div className="destination-carousel">
+
+                            {!showAllDestinations && (
+
+                                <button
+
+                                    type="button"
+
+                                    className="destination-scroll-button left"
+
+                                    onClick={() => scrollDestinations(-1)}
+
+                                    aria-label="Previous destinations"
 
                                 >
 
-                                    <div className="destination-image">
+                                    ‹
 
-                                        <img
+                                </button>
 
-                                            src={
+                            )}
 
-                                                destination.images[0]
+                            <div
+
+                                className={
+
+                                    showAllDestinations
+
+                                        ? "destination-grid show-all"
+
+                                        : "destination-grid"
+
+                                }
+
+                                ref={destinationGridRef}
+
+                            >
+
+                                {filteredDestinations.map((destination) => (
+
+                                    <div
+
+                                        className="explore-destination-card"
+
+                                        key={destination.id || destination.name}
+
+                                        onClick={() => handleDestinationClick(destination)}
+
+                                        role="button"
+
+                                        tabIndex={0}
+
+                                        onKeyDown={(event) => {
+
+                                            if (event.key === "Enter" || event.key === " ") {
+
+                                                event.preventDefault();
+
+                                                handleDestinationClick(destination);
 
                                             }
 
-                                            alt={
+                                        }}
 
-                                                destination.name
+                                    >
 
-                                            }
+                                        <div className="destination-image">
 
-                                        />
+                                            <img
 
-                                        <button
+                                                src={destination.images[0]}
 
-                                            className="save-place"
+                                                alt={destination.name}
 
-                                            onClick={(event) => {
+                                            />
 
-                                                event.stopPropagation();
+                                            <button
 
-                                            }}
+                                                className="save-place"
 
-                                            aria-label={`Save ${destination.name}`}
+                                                onClick={(event) => {
 
-                                        >
+                                                    event.stopPropagation();
 
-                                            ♡
+                                                }}
 
-                                        </button>
+                                                aria-label={`Save ${destination.name}`}
 
-                                    </div>
+                                            >
 
-                                    <div className="explore-destination-info">
+                                                ♡
 
-                                        <div>
-
-                                            <h3>
-
-                                                {
-
-                                                    destination.name
-
-                                                }
-
-                                            </h3>
-
-                                            <p>
-
-                                                {
-
-                                                    destination.places
-
-                                                }
-
-                                            </p>
+                                            </button>
 
                                         </div>
 
-                                        <div className="destination-rating">
+                                        <div className="explore-destination-info">
 
-                                            ★{" "}
+                                            <div>
 
-                                            {
+                                                <h3>{destination.name}</h3>
 
-                                                destination.rating
+                                                <p>{destination.places}</p>
 
-                                            }
+                                            </div>
+
+                                            <div className="destination-rating">
+
+                                                ★ {destination.rating}
+
+                                            </div>
 
                                         </div>
 
                                     </div>
 
-                                </div>
+                                ))}
 
-                            )
+                            </div>
 
-                        )}
+                            {!showAllDestinations && (
 
-                    </div>
+                                <button
+
+                                    type="button"
+
+                                    className="destination-scroll-button right"
+
+                                    onClick={() => scrollDestinations(1)}
+
+                                    aria-label="Next destinations"
+
+                                >
+
+                                    ›
+
+                                </button>
+
+                            )}
+
+                        </div>
 
                 ) : (
 
