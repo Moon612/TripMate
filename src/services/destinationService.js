@@ -1,5 +1,14 @@
 const API_KEY = import.meta.env.VITE_GEOAPIFY_API_KEY;
 
+const normalizePlaceName = (value) =>
+    String(value || "")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+        .replace(/[^a-z0-9\s]/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+
 const categoryDestinations = {
     Beaches: [
         "Goa, India",
@@ -130,23 +139,24 @@ const categoryImages = {
     ]
 };
 
+
 export async function searchDestinations(searchTerm, signal) {
-    if (!searchTerm.trim()) {
+    const query = normalizePlaceName(searchTerm);
+
+    if (!query) {
         return [];
     }
 
     const url =
         `https://api.geoapify.com/v1/geocode/search` +
-        `?text=${encodeURIComponent(searchTerm + ", India")}` +
+        `?text=${encodeURIComponent(searchTerm)}` +
         `&type=city` +
         `&filter=countrycode:in` +
         `&limit=8` +
         `&format=json` +
         `&apiKey=${API_KEY}`;
 
-    const response = await fetch(url, {
-        signal
-    });
+    const response = await fetch(url, { signal });
 
     if (!response.ok) {
         throw new Error("Could not search destinations");
@@ -154,8 +164,25 @@ export async function searchDestinations(searchTerm, signal) {
 
     const data = await response.json();
 
-    return data.results || [];
+    return (data.results || []).filter((place) => {
+        const isIndia =
+            String(place.country_code || "").toLowerCase() === "in";
+
+        const placeNames = [
+            place.city,
+            place.name
+        ]
+            .filter(Boolean)
+            .map(normalizePlaceName);
+
+        const matchesSearch = placeNames.some(
+            (name) => name === query || name.startsWith(query)
+        );
+
+        return isIndia && matchesSearch;
+    });
 }
+
 
 export async function searchDestinationsByCategory(category, signal) {
     const destinations = categoryDestinations[category];

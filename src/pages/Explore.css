@@ -1955,3 +1955,193 @@
     }
 
 }
+
+/* Preloaded background images crossfade without a zoom or size reset. */
+.featured-destination {
+    isolation: isolate;
+}
+
+.featured-destination > .featured-background-image {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    will-change: opacity;
+    transform: none;
+}
+
+.featured-destination > .featured-background-image-incoming {
+    z-index: 2;
+    animation: featuredImageFadeIn 1400ms ease-in-out both;
+}
+
+.featured-destination > .featured-background-image-outgoing {
+    z-index: 1;
+    opacity: 1;
+    animation: featuredImageFadeOut 1400ms ease-in-out both;
+    pointer-events: none;
+}
+
+.featured-destination > .featured-overlay {
+    z-index: 3;
+}
+
+.featured-content-enter {
+    z-index: 4;
+    animation: featuredContentEnter 240ms ease-out both;
+}
+
+@keyframes featuredImageFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes featuredImageFadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+@keyframes featuredContentEnter {
+    from { opacity: 0.92; }
+    to { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .featured-destination > .featured-background-image-incoming,
+    .featured-destination > .featured-background-image-outgoing,
+    .featured-content-enter {
+        animation-duration: 1ms;
+    }
+}
+
+
+/* Keep the featured image and copy changing together after the next image is decoded. */
+.featured-destination > .featured-background-image-incoming {
+    animation: featuredImageFadeIn 1400ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+
+.featured-destination > .featured-background-image-outgoing {
+    animation: featuredImageFadeOut 1400ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+
+.featured-content-enter {
+    z-index: 5;
+    animation: featuredContentFadeIn 1400ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+
+.featured-content-outgoing {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 4;
+    pointer-events: none;
+    animation: featuredContentFadeOut 1400ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+
+@keyframes featuredContentFadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes featuredContentFadeOut {
+    from { opacity: 1; transform: translateY(0); }
+    to { opacity: 0; transform: translateY(-5px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .featured-destination > .featured-background-image-incoming,
+    .featured-destination > .featured-background-image-outgoing,
+    .featured-content-enter,
+    .featured-content-outgoing {
+        animation-duration: 1ms;
+    }
+}
+
+/* Keep the featured copy and button hidden until a real destination is ready,
+   then fade the whole content group together without sliding. */
+.featured-content-enter {
+    z-index: 5;
+    animation: featuredTextFadeIn 700ms ease-in-out both;
+}
+
+.featured-content-outgoing {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    max-width: 520px;
+    box-sizing: border-box;
+    z-index: 4;
+    pointer-events: none;
+    animation: featuredTextFadeOut 700ms ease-in-out both;
+}
+
+.featured-destination > .featured-background-image-incoming {
+    animation: featuredImageFadeIn 900ms ease-in-out both;
+}
+
+.featured-destination > .featured-background-image-outgoing {
+    animation: featuredImageFadeOut 900ms ease-in-out both;
+}
+
+@keyframes featuredTextFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes featuredTextFadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .featured-destination > .featured-background-image-incoming,
+    .featured-destination > .featured-background-image-outgoing,
+    .featured-content-enter,
+    .featured-content-outgoing {
+        animation-duration: 1ms;
+    }
+}
+
+
+/* Fade the complete featured copy as one unit, including the button. */
+.featured-destination > .featured-content-enter,
+.featured-destination > .featured-content-outgoing {
+    box-sizing: border-box;
+    will-change: opacity;
+    transform: none;
+}
+
+.featured-destination > .featured-content-enter {
+    animation: featuredContentTogether 900ms ease-in-out both !important;
+}
+
+.featured-destination > .featured-content-outgoing {
+    animation: featuredContentTogetherOut 900ms ease-in-out both !important;
+}
+
+.featured-content-outgoing button {
+    visibility: visible;
+    opacity: 1;
+    pointer-events: none;
+}
+
+@keyframes featuredContentTogether {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes featuredContentTogetherOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .featured-destination > .featured-content-enter,
+    .featured-destination > .featured-content-outgoing {
+        animation-duration: 1ms !important;
+    }
+}

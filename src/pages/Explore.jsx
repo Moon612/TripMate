@@ -6,1872 +6,1957 @@ import "./Explore.css";
 
 import {
 
-    searchDestinations,
+    searchDestinations,
 
-    searchDestinationsByCategory
+    searchDestinationsByCategory
 
 } from "../services/destinationService";
 
-const popularDestinations = [
-
-    {
-
-        name: "Japan",
-
-        country: "Japan",
-
-        places: "Tokyo • Kyoto • Osaka",
-
-        rating: "4.8",
-
-        category: "Culture",
-
-        images: [
-
-            "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=900&q=85",
-
-            "https://images.unsplash.com/photo-1528360983277-13d401cdc186?auto=format&fit=crop&w=900&q=85",
-
-            "https://images.unsplash.com/photo-1490806843957-31f4c9a91c91?auto=format&fit=crop&w=900&q=85"
-
-        ]
-
-    },
-
-    {
-
-        name: "Greece",
-
-        country: "Greece",
-
-        places: "Santorini • Athens",
-
-        rating: "4.9",
-
-        category: "Beaches",
-
-        images: [
-
-            "https://images.unsplash.com/photo-1533105079780-92b9be482077?auto=format&fit=crop&w=900&q=85",
-
-            "https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?auto=format&fit=crop&w=900&q=85",
-
-            "https://images.unsplash.com/photo-1601581875309-fafbf2d3ed3a?auto=format&fit=crop&w=900&q=85"
-
-        ]
-
-    },
-
-    {
-
-        name: "France",
-
-        country: "France",
-
-        places: "Paris • Nice • Lyon",
-
-        rating: "4.9",
-
-        category: "Cities",
-
-        images: [
-
-            "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=900&q=85",
-
-            "https://images.unsplash.com/photo-1499856871958-5b9627545d1a?auto=format&fit=crop&w=900&q=85",
-
-            "https://images.unsplash.com/photo-1522093007474-d86e9bf7ba6f?auto=format&fit=crop&w=900&q=85"
-
-        ]
-
-    },
-
-    {
-
-        name: "Switzerland",
-
-        country: "Switzerland",
-
-        places: "Zurich • Interlaken",
-
-        rating: "4.8",
-
-        category: "Mountains",
-
-        images: [
-
-            "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=900&q=85",
-
-            "https://images.unsplash.com/photo-1531366936337-7c912a4589a7?auto=format&fit=crop&w=900&q=85",
-
-            "https://images.unsplash.com/photo-1527668752968-14dc70a27c95?auto=format&fit=crop&w=900&q=85"
-
-        ]
-
-    }
-
-];
-
 const categories = [
 
-    { name: "All", icon: "🌎" },
+    { name: "All", icon: "🌎" },
 
-    { name: "Beaches", icon: "🏖️" },
+    { name: "Beaches", icon: "🏖️" },
 
-    { name: "Mountains", icon: "🏔️" },
+    { name: "Mountains", icon: "🏔️" },
 
-    { name: "Culture", icon: "🏛️" },
+    { name: "Culture", icon: "🏛️" },
 
-    { name: "Food", icon: "🍜" },
+    { name: "Food", icon: "🍜" },
 
-    { name: "Cities", icon: "🌆" },
+    { name: "Cities", icon: "🌆" },
 
-    { name: "Nature", icon: "🌿" },
+    { name: "Nature", icon: "🌿" },
 
-    { name: "Adventure", icon: "🎒" }
+    { name: "Adventure", icon: "🎒" }
 
 ];
+
+const featuredDestinationImages = {
+    mumbai: "https://images.unsplash.com/photo-1566552881560-0be862a7c445?auto=format&fit=crop&w=1800&q=85",
+    delhi: "https://images.unsplash.com/photo-1587474260584-136574528ed5?auto=format&fit=crop&w=1800&q=85",
+    bengaluru: "https://images.unsplash.com/photo-1596176530529-78163a4f7af2?auto=format&fit=crop&w=1800&q=85",
+    bangalore: "https://images.unsplash.com/photo-1596176530529-78163a4f7af2?auto=format&fit=crop&w=1800&q=85",
+    hyderabad: "https://images.unsplash.com/photo-1606293926075-69a00dbfde81?auto=format&fit=crop&w=1800&q=85",
+    chennai: "https://images.unsplash.com/photo-1582510003544-4d00b7f74220?auto=format&fit=crop&w=1800&q=85",
+    kolkata: "https://images.unsplash.com/photo-1558431382-27e303142255?auto=format&fit=crop&w=1800&q=85",
+    pune: "https://images.unsplash.com/photo-1570168007204-dfb528c6958f?auto=format&fit=crop&w=1800&q=85",
+    jaipur: "https://images.unsplash.com/photo-1599661046827-dacff0c0f09a?auto=format&fit=crop&w=1800&q=85"
+};
+
+const getFeaturedImage = (destination) => {
+    const name = String(destination?.name || "").trim().toLowerCase();
+    return featuredDestinationImages[name] || destination?.images?.[0] || "";
+};
+
+const preloadImage = async (url) => {
+    if (!url) return false;
+
+    const image = new Image();
+    image.src = url;
+
+    try {
+        if (typeof image.decode === "function") {
+            await image.decode();
+        } else {
+            await new Promise((resolve, reject) => {
+                image.onload = resolve;
+                image.onerror = reject;
+            });
+        }
+        return true;
+    } catch {
+        return image.complete && image.naturalWidth > 0;
+    }
+};
 
 function Explore() {
 
-    const destinationGridRef = useRef(null);
+    const destinationGridRef = useRef(null);
 
-    const navigate = useNavigate();
+    const navigate = useNavigate();
 
-    const [searchTerm, setSearchTerm] = useState("");
+    const [searchTerm, setSearchTerm] = useState("");
+
+    const [selectedCategory, setSelectedCategory] = useState("All");
 
-    const [selectedCategory, setSelectedCategory] = useState("All");
+    const [categoryDestinations, setCategoryDestinations] = useState([]);
+
+    const [categoryLoading, setCategoryLoading] = useState(false);
+
+    const [categoryError, setCategoryError] = useState("");
+
+    const [searchResults, setSearchResults] = useState([]);
+
+    const [suggestions, setSuggestions] = useState([]);
+
+    const [hasSearched, setHasSearched] = useState(false);
+
+    const [loading, setLoading] = useState(false);
+
+    const [error, setError] = useState("");
+
+    const [showSuggestions, setShowSuggestions] = useState(false);
+
+    const[selectedDestination, setSelectedDestination] = useState(null);
+
+    const[currentImageIndex, setCurrentImageIndex] =useState(0);
+
+    const [showAllDestinations, setShowAllDestinations] = useState(false);
+    const [popularDestinations, setPopularDestinations] = useState([]);
+    const [popularLoading, setPopularLoading] = useState(true);
+    const [popularError, setPopularError] = useState("");
+    const [dailyFeaturedDestinations, setDailyFeaturedDestinations] = useState([]);
+    const [featuredIndex, setFeaturedIndex] = useState(0);
+    const [previousFeaturedDestination, setPreviousFeaturedDestination] = useState(null);
+    const featuredIndexRef = useRef(0);
+
+    useEffect(() => {
+        const controller = new AbortController();
+
+        const loadPopularDestinations = async () => {
+            try {
+                setPopularLoading(true);
+                setPopularError("");
+
+                // Load the popular city cards from the existing destination service.
+                const results = await searchDestinationsByCategory(
+                    "Cities",
+                    controller.signal
+                );
+
+                const uniqueDestinations = [];
+                const seenNames = new Set();
+
+                results.forEach((destination) => {
+                    const key = (destination.name || "")
+                        .trim()
+                        .toLowerCase();
+
+                    if (key && !seenNames.has(key)) {
+                        seenNames.add(key);
+                        uniqueDestinations.push(destination);
+                    }
+                });
+
+                setPopularDestinations(uniqueDestinations.slice(0, 12));
+            } catch (error) {
+                if (error.name !== "AbortError") {
+                    console.error("Failed to load popular destinations:", error);
+                    setPopularError("Unable to load popular destinations right now.");
+                }
+            } finally {
+                if (!controller.signal.aborted) {
+                    setPopularLoading(false);
+                }
+            }
+        };
+
+        loadPopularDestinations();
+
+        return () => controller.abort();
+    }, []);
+
+    // Pick a consistent group of up to six featured destinations for the current day.
+    useEffect(() => {
+        if (!popularDestinations.length) {
+            setDailyFeaturedDestinations([]);
+            setFeaturedIndex(0);
+            featuredIndexRef.current = 0;
+            setPreviousFeaturedDestination(null);
+            return;
+        }
 
-    const [categoryDestinations, setCategoryDestinations] = useState([]);
+        const today = new Date();
+        const dayNumber = Math.floor(
+            Date.UTC(today.getFullYear(), today.getMonth(), today.getDate()) /
+                86400000
+        );
+        const count = Math.min(6, popularDestinations.length);
+        const startIndex = dayNumber % popularDestinations.length;
+        const dailySelection = Array.from({ length: count }, (_, index) =>
+            popularDestinations[(startIndex + index) % popularDestinations.length]
+        );
+        let cancelled = false;
 
-    const [categoryLoading, setCategoryLoading] = useState(false);
+        // Decode the first featured image before showing its name or image.
+        const firstImageUrl = getFeaturedImage(dailySelection[0]);
+        preloadImage(firstImageUrl).finally(() => {
+            if (cancelled) return;
+            setDailyFeaturedDestinations(dailySelection);
+            setFeaturedIndex(0);
+            featuredIndexRef.current = 0;
+            setPreviousFeaturedDestination(null);
+        });
 
-    const [categoryError, setCategoryError] = useState("");
+        // Preload and decode the remaining images before their rotation turn.
+        dailySelection.slice(1).forEach((destination) => {
+            void preloadImage(getFeaturedImage(destination));
+        });
 
-    const [searchResults, setSearchResults] = useState([]);
+        return () => {
+            cancelled = true;
+        };
+    }, [popularDestinations]);
 
-    const [suggestions, setSuggestions] = useState([]);
+    // Preload each next image, then crossfade only after it is ready.
+    useEffect(() => {
+        if (dailyFeaturedDestinations.length < 2) {
+            return;
+        }
 
-    const [hasSearched, setHasSearched] = useState(false);
+        let cancelled = false;
+        let transitionTimeout;
+        let transitionPending = false;
 
-    const [loading, setLoading] = useState(false);
+        const interval = setInterval(async () => {
+            if (transitionPending) return;
+            transitionPending = true;
 
-    const [error, setError] = useState("");
+            const currentIndex = featuredIndexRef.current;
+            const nextIndex = (currentIndex + 1) % dailyFeaturedDestinations.length;
+            const nextDestination = dailyFeaturedDestinations[nextIndex];
+            const nextImageUrl = getFeaturedImage(nextDestination);
 
-    const [showSuggestions, setShowSuggestions] = useState(false);
+            // Wait for the next image to be decoded before changing image or text.
+            await preloadImage(nextImageUrl);
+            if (cancelled) return;
 
-    const[selectedDestination, setSelectedDestination] = useState(null);
+            setPreviousFeaturedDestination(
+                dailyFeaturedDestinations[currentIndex] || null
+            );
+            featuredIndexRef.current = nextIndex;
+            setFeaturedIndex(nextIndex);
+            transitionTimeout = setTimeout(() => {
+                setPreviousFeaturedDestination(null);
+                transitionPending = false;
+            }, 850);
+        }, 6000);
 
-    const[currentImageIndex, setCurrentImageIndex] =useState(0);
+        return () => {
+            cancelled = true;
+            clearInterval(interval);
+            clearTimeout(transitionTimeout);
+        };
+    }, [dailyFeaturedDestinations]);
 
-    const [showAllDestinations, setShowAllDestinations] = useState(false);
+    /*
+     * This runs while the user is typing.
 
-    /*
+     * We wait 500ms before making the API request so that
 
-     * This runs while the user is typing.
+     * we don't send a request for every single key press.
 
-     * We wait 500ms before making the API request so that
+     */
 
-     * we don't send a request for every single key press.
+    useEffect(() => {
 
-     */
+        const value = searchTerm.trim();
 
-    useEffect(() => {
+        if (value.length < 2 || hasSearched) {
 
-        const value = searchTerm.trim();
+            setSuggestions([]);
 
-        if (value.length < 2 || hasSearched) {
+            setShowSuggestions(false);
 
-            setSuggestions([]);
+            return;
 
-            setShowSuggestions(false);
+        }
 
-            return;
+        const controller = new AbortController();
 
-        }
+        const timer = setTimeout(async () => {
 
-        const controller = new AbortController();
+            try {
 
-        const timer = setTimeout(async () => {
+                setLoading(true);
 
-            try {
+                const results = await searchDestinations(
 
-                setLoading(true);
+                    value,
 
-                const results = await searchDestinations(
+                    controller.signal
 
-                    value,
+                );
 
-                    controller.signal
+                setSuggestions(results);
 
-                );
+                setShowSuggestions(true);
 
-                setSuggestions(results);
+            } catch (error) {
 
-                setShowSuggestions(true);
+                if (error.name !== "AbortError") {
 
-            } catch (error) {
+                    console.error(
 
-                if (error.name !== "AbortError") {
+                        "Autocomplete search failed:",
 
-                    console.error(
+                        error
 
-                        "Autocomplete search failed:",
+                    );
 
-                        error
+                    setSuggestions([]);
 
-                    );
+                }
 
-                    setSuggestions([]);
+            } finally {
 
-                }
+                setLoading(false);
 
-            } finally {
+            }
 
-                setLoading(false);
+        }, 500);
 
-            }
+        return () => {
 
-        }, 500);
+            clearTimeout(timer);
 
-        return () => {
+            controller.abort();
 
-            clearTimeout(timer);
+        };
 
-            controller.abort();
+    }, [searchTerm, hasSearched]);
 
-        };
+    useEffect(() => {
 
-    }, [searchTerm, hasSearched]);
+        if (selectedCategory === "All") {
 
-    useEffect(() => {
+            setCategoryDestinations([]);
 
-        if (selectedCategory === "All") {
+            setCategoryError("");
 
-            setCategoryDestinations([]);
+            return;
 
-            setCategoryError("");
+        }
 
-            return;
+        const controller = new AbortController();
 
-        }
+        const loadCategoryDestinations = async () => {
 
-        const controller = new AbortController();
+            try {
 
-        const loadCategoryDestinations = async () => {
+                setCategoryLoading(true);
 
-            try {
+                setCategoryError("");
 
-                setCategoryLoading(true);
+                const results = await searchDestinationsByCategory(
 
-                setCategoryError("");
+                    selectedCategory,
 
-                const results = await searchDestinationsByCategory(
+                    controller.signal
 
-                    selectedCategory,
+                );
 
-                    controller.signal
+                setCategoryDestinations(results);
 
-                );
+            } catch (error) {
 
-                setCategoryDestinations(results);
+                if (error.name !== "AbortError") {
 
-            } catch (error) {
+                    console.error(
 
-                if (error.name !== "AbortError") {
+                        "Category destination search failed:",
 
-                    console.error(
+                        error
 
-                        "Category destination search failed:",
+                    );
 
-                        error
+                    setCategoryDestinations([]);
 
-                    );
+                    setCategoryError(
 
-                    setCategoryDestinations([]);
+                        "Unable to load destinations for this category."
 
-                    setCategoryError(
+                    );
 
-                        "Unable to load destinations for this category."
+                }
 
-                    );
+            } finally {
 
-                }
+                if (!controller.signal.aborted) {
 
-            } finally {
+                    setCategoryLoading(false);
 
-                if (!controller.signal.aborted) {
+                }
 
-                    setCategoryLoading(false);
+            }
 
-                }
+        };
 
-            }
+        loadCategoryDestinations();
 
-        };
+        return () => {
 
-        loadCategoryDestinations();
+            controller.abort();
 
-        return () => {
+        };
 
-            controller.abort();
+    }, [selectedCategory]);
 
-        };
+    const filteredDestinations =
 
-    }, [selectedCategory]);
+        selectedCategory === "All"
 
-    const filteredDestinations =
+            ? popularDestinations
 
-        selectedCategory === "All"
+            : categoryDestinations;
 
-            ? popularDestinations
+    const featuredDestination = dailyFeaturedDestinations[featuredIndex] || null;
 
-            : categoryDestinations;
+    const handleSearch = async (value = searchTerm) => {
 
-    const handleSearch = async (value = searchTerm) => {
+        const searchValue = value.trim();
 
-        const searchValue = value.trim();
+        if (!searchValue) {
 
-        if (!searchValue) {
+            return;
 
-            return;
+        }
 
-        }
+        try {
 
-        try {
+            setLoading(true);
 
-            setLoading(true);
+            setError("");
 
-            setError("");
+            setShowSuggestions(false);
 
-            setShowSuggestions(false);
+            setSuggestions([]);
 
-            setSuggestions([]);
+            setHasSearched(true);
 
-            setHasSearched(true);
+            const results = await searchDestinations(searchValue);
 
-            const results = await searchDestinations(searchValue);
+            setSearchResults(results);
 
-            setSearchResults(results);
+        } catch (error) {
 
-        } catch (error) {
+            console.error("Destination search failed:", error);
 
-            console.error("Destination search failed:", error);
+            setSearchResults([]);
 
-            setSearchResults([]);
+            setError(
 
-            setError(
+                "Unable to search destinations right now."
 
-                "Unable to search destinations right now."
+            );
 
-            );
+        } finally {
 
-        } finally {
+            setLoading(false);
 
-            setLoading(false);
+        }
 
-        }
+    };
 
-    };
+    const handleSuggestionClick = (destination) => {
 
-    const handleSuggestionClick = (destination) => {
+        const destinationName =
 
-        const destinationName =
+            destination.city ||
 
-            destination.city ||
+            destination.name ||
 
-            destination.name ||
+            destination.address_line1 ||
 
-            destination.address_line1 ||
+            searchTerm;
 
-            searchTerm;
+        setSearchTerm(destinationName);
 
-        setSearchTerm(destinationName);
+        setSearchResults([destination]);
 
-        setSearchResults([destination]);
+        setHasSearched(true);
 
-        setHasSearched(true);
+        setShowSuggestions(false);
 
-        setShowSuggestions(false);
+        setSuggestions([]);
 
-        setSuggestions([]);
+        setError("");
 
-        setError("");
+    };
 
-    };
+    const handleCategoryClick = (category) => {
 
-    const handleCategoryClick = (category) => {
+        setSelectedCategory(category);
 
-        setSelectedCategory(category);
+        setCategoryError("");
 
-        setCategoryError("");
+        setCategoryDestinations([]);
 
-        setCategoryDestinations([]);
+        setSearchTerm("");
 
-        setSearchTerm("");
+        setSearchResults([]);
 
-        setSearchResults([]);
+        setSuggestions([]);
 
-        setSuggestions([]);
+        setHasSearched(false);
 
-        setHasSearched(false);
+        setShowSuggestions(false);
 
-        setShowSuggestions(false);
+        setError("");
 
-        setError("");
+        setShowAllDestinations(false);
 
-        setShowAllDestinations(false);
+    };
 
-    };
+    const clearSearch = () => {
 
-    const clearSearch = () => {
+        setSearchTerm("");
 
-        setSearchTerm("");
+        setSearchResults([]);
 
-        setSearchResults([]);
+        setSuggestions([]);
 
-        setSuggestions([]);
+        setHasSearched(false);
 
-        setHasSearched(false);
+        setShowSuggestions(false);
 
-        setShowSuggestions(false);
+        setError("");
 
-        setError("");
+        setSelectedCategory("All");
 
-        setSelectedCategory("All");
+    };
 
-    };
+    const getDestinationName = (destination) => {
 
-    const getDestinationName = (destination) => {
+        return (
 
-        return (
+            destination.city ||
 
-            destination.city ||
+            destination.name ||
 
-            destination.name ||
+            destination.address_line1 ||
 
-            destination.address_line1 ||
+            "Unknown destination"
 
-            "Unknown destination"
+        );
 
-        );
+    };
 
-    };
+    const getDestinationLocation = (destination) => {
 
-    const getDestinationLocation = (destination) => {
+        const parts = [];
 
-        const parts = [];
+        if (destination.state) {
 
-        if (destination.state) {
+            parts.push(destination.state);
 
-            parts.push(destination.state);
+        }
 
-        }
+        if (destination.country) {
 
-        if (destination.country) {
+            parts.push(destination.country);
 
-            parts.push(destination.country);
+        }
 
-        }
+        return parts.join(", ");
 
-        return parts.join(", ");
+    };
 
-    };
+    const handleAddToTrip = (destination) => {
 
-    const handleAddToTrip = (destination) => {
+        navigate("/trips/new", {
 
-        navigate("/trips/new", {
+            state: {
 
-            state: {
+                destination: destination
 
-                destination: destination
+            }
 
-            }
+        });
 
-        });
+    };
 
-    };
+    const handleDestinationClick = (destination) => {
 
-    const handleDestinationClick = (destination) => {
+        setSelectedDestination(destination);
 
-        setSelectedDestination(destination);
+        setCurrentImageIndex(0);
 
-        setCurrentImageIndex(0);
+    };
 
-    };
+    const closeDestinationPreview = () => {
 
-    const closeDestinationPreview = () => {
+        setSelectedDestination(null);
 
-        setSelectedDestination(null);
+    }
 
-    }
+    useEffect(() => {
 
-    useEffect(() => {
+        if (!selectedDestination) {
 
-        if (!selectedDestination) {
+            return;
 
-            return;
+        }
 
-        }
+        const images = selectedDestination.images || [];
 
-        const images = selectedDestination.images || [];
+        if (images.length <= 1) {
 
-        if (images.length <= 1) {
+            return;
 
-            return;
+        }
 
-        }
+        const timer = setInterval(() => {
 
-        const timer = setInterval(() => {
+            setCurrentImageIndex((currentIndex) => {
 
-            setCurrentImageIndex((currentIndex) => {
+                return (currentIndex + 1) % images.length;
 
-                return (currentIndex + 1) % images.length;
+            });
 
-            });
+        }, 3000);
 
-        }, 3000);
+        return () => {
 
-        return () => {
+            clearInterval(timer);
 
-            clearInterval(timer);
+        };
 
-        };
+    }, [selectedDestination]);
 
-    }, [selectedDestination]);
+    const scrollDestinations = (direction) => {
 
-    const scrollDestinations = (direction) => {
+        const container = destinationGridRef.current;
 
-        const container = destinationGridRef.current;
+        if (!container) return;
 
-        if (!container) return;
+        container.scrollBy({
 
-        container.scrollBy({
+            left: direction * container.clientWidth,
 
-            left: direction * container.clientWidth,
+            behavior: "smooth"
 
-            behavior: "smooth"
+        });
 
-        });
+    };
 
-    };
 return (
 
-        <div className="explore-page">
+        <div className="explore-page">
 
-            {/* Hero / Search */}
+            {/* Hero / Search */}
 
-            <section className="explore-hero">
+            <section className="explore-hero">
 
-                <div className="explore-hero-content">
+                <div className="explore-hero-content">
 
-                    <p className="explore-label">
+                    <p className="explore-label">
 
-                        DISCOVER • EXPLORE • TRAVEL
+                        DISCOVER • EXPLORE • TRAVEL
 
-                    </p>
+                    </p>
 
-                    <h1>
+                    <h1>
 
-                        Discover your next<span> adventure.</span>
+                        Discover your next<span> adventure.</span>
 
-                    </h1>
+                    </h1>
 
-                    <p className="explore-hero-text">
+                    <p className="explore-hero-text">
 
-                        Find inspiring destinations, beautiful places
+                        Find inspiring destinations, beautiful places
 
-                        and experiences for your next journey.
+                        and experiences for your next journey.
 
-                    </p>
+                    </p>
 
-                    <div className="explore-search-wrapper">
+                    <div className="explore-search-wrapper">
 
-                        <div className="explore-search">
+                        <div className="explore-search">
 
-                            <span className="search-icon">
+                            <span className="search-icon">
 
-                                ⌕
+                                ⌕
 
-                            </span>
+                            </span>
 
-                            <input
+                            <input
 
-                                type="text"
+                                type="text"
 
-                                placeholder="Search destinations, cities or places..."
+                                placeholder="Search destinations, cities or places..."
 
-                                value={searchTerm}
+                                value={searchTerm}
 
-                                onChange={(event) => {
+                                onChange={(event) => {
 
-                                    setSearchTerm(
+                                    setSearchTerm(
 
-                                        event.target.value
+                                        event.target.value
 
-                                    );
+                                    );
 
-                                    setHasSearched(false);
+                                    setHasSearched(false);
 
-                                    setSearchResults([]);
+                                    setSearchResults([]);
 
-                                    setError("");
+                                    setError("");
 
-                                }}
+                                }}
 
-                                onFocus={() => {
+                                onFocus={() => {
 
-                                    if (
+                                    if (
 
-                                        suggestions.length > 0
+                                        suggestions.length > 0
 
-                                    ) {
+                                    ) {
 
-                                        setShowSuggestions(true);
+                                        setShowSuggestions(true);
 
-                                    }
+                                    }
 
-                                }}
+                                }}
 
-                                onKeyDown={(event) => {
+                                onKeyDown={(event) => {
 
-                                    if (
+                                    if (
 
-                                        event.key === "Enter"
+                                        event.key === "Enter"
 
-                                    ) {
+                                    ) {
 
-                                        handleSearch();
+                                        handleSearch();
 
-                                    }
+                                    }
 
-                                    if (
+                                    if (
 
-                                        event.key === "Escape"
+                                        event.key === "Escape"
 
-                                    ) {
+                                    ) {
 
-                                        setShowSuggestions(false);
+                                        setShowSuggestions(false);
 
-                                    }
+                                    }
 
-                                }}
+                                }}
 
-                            />
+                            />
 
-                            <button
+                            <button
 
-                                onClick={() => handleSearch()}
+                                onClick={() => handleSearch()}
 
-                                disabled={
+                                disabled={
 
-                                    loading &&
+                                    loading &&
 
-                                    searchTerm.length >= 2
+                                    searchTerm.length >= 2
 
-                                }
+                                }
 
-                            >
+                            >
 
-                                {loading && hasSearched
+                                {loading && hasSearched
 
-                                    ? "Searching..."
+                                    ? "Searching..."
 
-                                    : "Search"}
+                                    : "Search"}
 
-                            </button>
+                            </button>
 
-                        </div>
+                        </div>
 
-                        {/* Autocomplete suggestions */}
+                        {/* Autocomplete suggestions */}
 
-                        {showSuggestions &&
+                        {showSuggestions &&
 
-                            suggestions.length > 0 && (
+                            suggestions.length > 0 && (
 
-                                <div className="autocomplete-dropdown">
+                                <div className="autocomplete-dropdown">
 
-                                    {suggestions.map(
+                                    {suggestions.map(
 
-                                        (destination) => (
+                                        (destination) => (
 
-                                            <button
+                                            <button
 
-                                                key={
+                                                key={
 
-                                                    destination.place_id ||
+                                                    destination.place_id ||
 
-                                                    `${destination.lat}-${destination.lon}`
+                                                    `${destination.lat}-${destination.lon}`
 
-                                                }
+                                                }
 
-                                                className="autocomplete-item"
+                                                className="autocomplete-item"
 
-                                                onClick={() =>
+                                                onClick={() =>
 
-                                                    handleSuggestionClick(
+                                                    handleSuggestionClick(
 
-                                                        destination
+                                                        destination
 
-                                                    )
+                                                    )
 
-                                                }
+                                                }
 
-                                            >
+                                            >
 
-                                                <span className="autocomplete-icon">
+                                                <span className="autocomplete-icon">
 
-                                                    📍
+                                                    📍
 
-                                                </span>
+                                                </span>
 
-                                                <span className="autocomplete-text">
+                                                <span className="autocomplete-text">
 
-                                                    <strong>
+                                                    <strong>
 
-                                                        {getDestinationName(
+                                                        {getDestinationName(
 
-                                                            destination
+                                                            destination
 
-                                                        )}
+                                                        )}
 
-                                                    </strong>
+                                                    </strong>
 
-                                                    <small>
+                                                    <small>
 
-                                                        {getDestinationLocation(
+                                                        {getDestinationLocation(
 
-                                                            destination
+                                                            destination
 
-                                                        )}
+                                                        )}
 
-                                                    </small>
+                                                    </small>
 
-                                                </span>
+                                                </span>
 
-                                            </button>
+                                            </button>
 
-                                        )
+                                        )
 
-                                    )}
+                                    )}
 
-                                </div>
+                                </div>
 
-                            )}
+                            )}
 
-                    </div>
+                    </div>
 
-                    {/* Popular searches */}
+                    {/* Popular searches */}
 
-                    <div className="popular-searches">
+                    <div className="popular-searches">
 
-                        <span>Popular:</span>
+                        <span>Popular:</span>
 
-                        <button
+                        <button
 
-                            onClick={() => {
+                            onClick={() => {
 
-                                setSearchTerm("Paris");
+                                setSearchTerm("Jaipur");
 
-                                handleSearch("Paris");
+                                handleSearch("Jaipur");
 
-                            }}
+                            }}
 
-                        >
+                        >
 
-                            Paris
+                            Jaipur
 
-                        </button>
+                        </button>
 
-                        <button
+                        <button
 
-                            onClick={() => {
+                            onClick={() => {
 
-                                setSearchTerm("Tokyo");
+                                setSearchTerm("Manali");
 
-                                handleSearch("Tokyo");
+                                handleSearch("Manali");
 
-                            }}
+                            }}
 
-                        >
+                        >
 
-                            Tokyo
+                            Manali
 
-                        </button>
+                        </button>
 
-                        <button
+                        <button
 
-                            onClick={() => {
+                            onClick={() => {
 
-                                setSearchTerm("Bali");
+                                setSearchTerm("Mumbai");
 
-                                handleSearch("Bali");
+                                handleSearch("Mumbai");
 
-                            }}
+                            }}
 
-                        >
+                        >
 
-                            Bali
+                            Mumbai
 
-                        </button>
+                        </button>
 
-                        <button
+                        <button
 
-                            onClick={() => {
+                            onClick={() => {
 
-                                setSearchTerm("Switzerland");
+                                setSearchTerm("Varanasi");
 
-                                handleSearch("Switzerland");
+                                handleSearch("Varanasi");
 
-                            }}
+                            }}
 
-                        >
+                        >
 
-                            Switzerland
+                            Varanasi
 
-                        </button>
+                        </button>
 
-                        <button
+                        <button
 
-                            onClick={() => {
+                            onClick={() => {
 
-                                setSearchTerm("Dubai");
+                                setSearchTerm("Bengaluru");
 
-                                handleSearch("Dubai");
+                                handleSearch("Bengaluru");
 
-                            }}
+                            }}
 
-                        >
+                        >
 
-                            Dubai
+                            Bengaluru
 
-                        </button>
+                        </button>
 
-                    </div>
+                    </div>
 
-                </div>
+                </div>
 
-            </section>
+            </section>
 
-            {/* Search Results */}
+            {/* Search Results */}
 
-            {hasSearched && (
+            {hasSearched && (
 
-                <section className="explore-section search-results-section">
+                <section className="explore-section search-results-section">
 
-                    <div className="explore-section-heading">
+                    <div className="explore-section-heading">
 
-                        <div>
+                        <div>
 
-                            <p>SEARCH RESULTS</p>
+                            <p>SEARCH RESULTS</p>
 
-                            <h2>
+                            <h2>
 
-                                Results for "{searchTerm}"
+                                Results for "{searchTerm}"
 
-                            </h2>
+                            </h2>
 
-                            {!loading && !error && (
+                            {!loading && !error && (
 
-                                <span>
+                                <span>
 
-                                    {searchResults.length} destination
+                                    {searchResults.length} destination
 
-                                    {searchResults.length !== 1
+                                    {searchResults.length !== 1
 
-                                        ? "s"
+                                        ? "s"
 
-                                        : ""}{" "}
+                                        : ""}{" "}
 
-                                    found
+                                    found
 
-                                </span>
+                                </span>
 
-                            )}
+                            )}
 
-                        </div>
+                        </div>
 
-                        <button
+                        <button
 
-                            className="view-all-button"
+                            className="view-all-button"
 
-                            onClick={() => setShowAllDestinations(!showAllDestinations)}
+                            onClick={() => setShowAllDestinations(!showAllDestinations)}
 
-                        >
+                        >
 
-                            {showAllDestinations ? "Show Less ←" : "View All →"}
+                            {showAllDestinations ? "Show Less ←" : "View All →"}
 
-                        </button>
+                        </button>
 
-                    </div>
+                    </div>
 
-                    {loading && (
+                    {loading && (
 
-                        <div className="no-results">
+                        <div className="no-results">
 
-                            <div className="no-results-icon">
+                            <div className="no-results-icon">
 
-                                ⌕
+                                ⌕
 
-                            </div>
+                            </div>
 
-                            <h3>
+                            <h3>
 
-                                Searching destinations...
+                                Searching destinations...
 
-                            </h3>
+                            </h3>
 
-                            <p>
+                            <p>
 
-                                Looking for places that match
+                                Looking for places that match
 
-                                your search.
+                                your search.
 
-                            </p>
+                            </p>
 
-                        </div>
+                        </div>
 
-                    )}
+                    )}
 
-                    {!loading && error && (
+                    {!loading && error && (
 
-                        <div className="no-results">
+                        <div className="no-results">
 
-                            <div className="no-results-icon">
+                            <div className="no-results-icon">
 
-                                !
+                                !
 
-                            </div>
+                            </div>
 
-                            <h3>
+                            <h3>
 
-                                Something went wrong
+                                Something went wrong
 
-                            </h3>
+                            </h3>
 
-                            <p>
+                            <p>
 
-                                {error}
+                                {error}
 
-                            </p>
+                            </p>
 
-                            <button
+                            <button
 
-                                onClick={() =>
+                                onClick={() =>
 
-                                    handleSearch()
+                                    handleSearch()
 
-                                }
+                                }
 
-                            >
+                            >
 
-                                Try Again
+                                Try Again
 
-                            </button>
+                            </button>
 
-                        </div>
+                        </div>
 
-                    )}
+                    )}
 
-                    {!loading &&
+                    {!loading &&
 
-                        !error &&
+                        !error &&
 
-                        searchResults.length > 0 && (
+                        searchResults.length > 0 && (
 
-                            <div className="api-destination-list">
+                            <div className="api-destination-list">
 
-                                {searchResults.map(
+                                {searchResults.map(
 
-                                    (destination) => (
+                                    (destination) => (
 
-                                        <div
+                                        <div
 
-                                            className="api-destination-card"
+                                            className="api-destination-card"
 
-                                            key={
+                                            key={
 
-                                                destination.place_id ||
+                                                destination.place_id ||
 
-                                                `${destination.lat}-${destination.lon}`
+                                                `${destination.lat}-${destination.lon}`
 
-                                            }
+                                            }
 
-                                        >
+                                        >
 
-                                            <div className="api-destination-info">
+                                            <div className="api-destination-info">
 
-                                                <h3>
+                                                <h3>
 
-                                                    {getDestinationName(
+                                                    {getDestinationName(
 
-                                                        destination
+                                                        destination
 
-                                                    )}
+                                                    )}
 
-                                                </h3>
+                                                </h3>
 
-                                                <p>
+                                                <p>
 
-                                                    {getDestinationLocation(
+                                                    {getDestinationLocation(
 
-                                                        destination
+                                                        destination
 
-                                                    )}
+                                                    )}
 
-                                                </p>
+                                                </p>
 
-                                            </div>
+                                            </div>
 
-                                            <button
+                                            <button
 
-                                                className="add-trip-button"
+                                                className="add-trip-button"
 
-                                                onClick={() =>
+                                                onClick={() =>
 
-                                                    handleAddToTrip(
+                                                    handleAddToTrip(
 
-                                                        destination
+                                                        destination
 
-                                                    )
+                                                    )
 
-                                                }
+                                                }
 
-                                            >
+                                            >
 
-                                                + Add to Next Trip
+                                                + Add to Next Trip
 
-                                            </button>
+                                            </button>
 
-                                        </div>
+                                        </div>
 
-                                    )
+                                    )
 
-                                )}
+                                )}
 
-                            </div>
+                            </div>
 
-                        )}
+                        )}
 
-                    {!loading &&
+                    {!loading &&
 
-                        !error &&
+                        !error &&
 
-                        searchResults.length === 0 && (
+                        searchResults.length === 0 && (
 
-                            <div className="no-results">
+                            <div className="no-results">
 
-                                <div className="no-results-icon">
+                                <div className="no-results-icon">
 
-                                    ⌕
+                                    ⌕
 
-                                </div>
+                                </div>
 
-                                <h3>
+                                <h3>
 
-                                    No destinations found
+                                    No destinations found
 
-                                </h3>
+                                </h3>
 
-                                <p>
+                                <p>
 
-                                    Try searching for another
+                                    Try searching for another
 
-                                    city or destination.
+                                    city or destination.
 
-                                </p>
+                                </p>
 
-                                <button
+                                <button
 
-                                    onClick={clearSearch}
+                                    onClick={clearSearch}
 
-                                >
+                                >
 
-                                    Clear Search
+                                    Clear Search
 
-                                </button>
+                                </button>
 
-                            </div>
+                            </div>
 
-                        )}
+                        )}
 
-                </section>
+                </section>
 
-            )}
+            )}
 
-            {/* Categories */}
+            {/* Categories */}
 
-            <section className="explore-section categories-section">
+            <section className="explore-section categories-section">
 
-                <div className="explore-section-heading">
+                <div className="explore-section-heading">
 
-                    <div>
+                    <div>
 
-                        <p>
+                        <p>
 
-                            EXPLORE BY INTEREST
+                            EXPLORE BY INTEREST
 
-                        </p>
+                        </p>
 
-                        <h2>
+                        <h2>
 
-                            What are you looking for?
+                            What are you looking for?
 
-                        </h2>
+                        </h2>
 
-                    </div>
+                    </div>
 
-                </div>
+                </div>
 
-                <div className="category-list">
+                <div className="category-list">
 
-                    {categories.map((category) => (
+                    {categories.map((category) => (
 
-                        <button
+                        <button
 
-                            key={category.name}
+                            key={category.name}
 
-                            className={
+                            className={
 
-                                selectedCategory ===
+                                selectedCategory ===
 
-                                category.name
+                                category.name
 
-                                    ? "category-card active"
+                                    ? "category-card active"
 
-                                    : "category-card"
+                                    : "category-card"
 
-                            }
+                            }
 
-                            onClick={() =>
+                            onClick={() =>
 
-                                handleCategoryClick(
+                                handleCategoryClick(
 
-                                    category.name
+                                    category.name
 
-                                )
+                                )
 
-                            }
+                            }
 
-                        >
+                        >
 
-                            <span>
+                            <span>
 
-                                {category.icon}
+                                {category.icon}
 
-                            </span>
+                            </span>
 
-                            <strong>
+                            <strong>
 
-                                {category.name}
+                                {category.name}
 
-                            </strong>
+                            </strong>
 
-                        </button>
+                        </button>
 
-                    ))}
+                    ))}
 
-                </div>
+                </div>
 
-            </section>
+            </section>
 
-            {/* Popular Destinations */}
+            {/* Popular Destinations */}
 
-            <section className="explore-section">
+            <section className="explore-section">
 
-                <div className="explore-section-heading">
+                <div className="explore-section-heading">
 
-                    <div>
+                    <div>
 
-                        <p>
+                        <p>
 
-                            POPULAR DESTINATIONS
+                            POPULAR DESTINATIONS
 
-                        </p>
+                        </p>
 
-                        <h2>
+                        <h2>
 
-                            {selectedCategory === "All"
+                            {selectedCategory === "All"
 
-                                ? "Places worth exploring"
+                                ? "Places worth exploring"
 
-                                : `${selectedCategory} destinations`}
+                                : `${selectedCategory} destinations`}
 
-                        </h2>
+                        </h2>
 
-                        <span>
+                        <span>
 
-                            {filteredDestinations.length}{" "}
+                            {filteredDestinations.length}{" "}
 
-                            destination
+                            destination
 
-                            {filteredDestinations.length !==
+                            {filteredDestinations.length !==
 
-                            1
+                            1
 
-                                ? "s"
+                                ? "s"
 
-                                : ""}{" "}
+                                : ""}{" "}
 
-                            found
+                            found
 
-                        </span>
+                        </span>
 
-                    </div>
+                    </div>
 
-                    <button
+                    <button
 
-                        className="view-all-button"
+                        className="view-all-button"
 
-                        onClick={() => {
+                        onClick={() => {
 
-                            setSelectedCategory("All");
+                            setSelectedCategory("All");
 
-                            setSearchTerm("");
+                            setSearchTerm("");
 
-                        }}
+                        }}
 
-                    >
+                    >
 
-                        View All →
+                        View All →
 
-                    </button>
+                    </button>
 
-                </div>
+                </div>
 
-                {categoryLoading ? (
+                {(selectedCategory === "All" ? popularLoading : categoryLoading) ? (
 
-                    <div className="no-results">
+                    <div className="no-results">
 
-                        <div className="no-results-icon">⌕</div>
+                        <div className="no-results-icon">⌕</div>
 
-                        <h3>Loading destinations...</h3>
+                        <h3>Loading destinations...</h3>
 
-                        <p>Finding places that match your interest.</p>
+                        <p>Finding places that match your interest.</p>
 
-                    </div>
+                    </div>
 
-                ) : categoryError ? (
+                ) : (selectedCategory === "All" ? popularError : categoryError) ? (
 
-                    <div className="no-results">
+                    <div className="no-results">
 
-                        <div className="no-results-icon">!</div>
+                        <div className="no-results-icon">!</div>
 
-                        <h3>Something went wrong</h3>
+                        <h3>Something went wrong</h3>
 
-                        <p>{categoryError}</p>
+                        <p>{selectedCategory === "All" ? popularError : categoryError}</p>
 
-                        <button
+                        <button
 
-                            onClick={() => setSelectedCategory("All")}
+                            onClick={() => setSelectedCategory("All")}
 
-                        >
+                        >
 
-                            View Popular Destinations
+                            View Popular Destinations
 
-                        </button>
+                        </button>
 
-                    </div>
+                    </div>
 
-                ) : filteredDestinations.length > 0 ? (
+                ) : filteredDestinations.length > 0 ? (
 
-                        <div className="destination-carousel">
+                        <div className="destination-carousel">
 
-                            {!showAllDestinations && (
+                            {!showAllDestinations && (
 
-                                <button
+                                <button
 
-                                    type="button"
+                                    type="button"
 
-                                    className="destination-scroll-button left"
+                                    className="destination-scroll-button left"
 
-                                    onClick={() => scrollDestinations(-1)}
+                                    onClick={() => scrollDestinations(-1)}
 
-                                    aria-label="Previous destinations"
+                                    aria-label="Previous destinations"
 
-                                >
+                                >
 
-                                    ‹
+                                    ‹
 
-                                </button>
+                                </button>
 
-                            )}
+                            )}
 
-                            <div
+                            <div
 
-                                className={
+                                className={
 
-                                    showAllDestinations
+                                    showAllDestinations
 
-                                        ? "destination-grid show-all"
+                                        ? "destination-grid show-all"
 
-                                        : "destination-grid"
+                                        : "destination-grid"
 
-                                }
+                                }
 
-                                ref={destinationGridRef}
+                                ref={destinationGridRef}
 
-                            >
+                            >
 
-                                {filteredDestinations.map((destination) => (
+                                {filteredDestinations.map((destination) => (
 
-                                    <div
+                                    <div
 
-                                        className="explore-destination-card"
+                                        className="explore-destination-card"
 
-                                        key={destination.id || destination.name}
+                                        key={destination.id || destination.name}
 
-                                        onClick={() => handleDestinationClick(destination)}
+                                        onClick={() => handleDestinationClick(destination)}
 
-                                        role="button"
+                                        role="button"
 
-                                        tabIndex={0}
+                                        tabIndex={0}
 
-                                        onKeyDown={(event) => {
+                                        onKeyDown={(event) => {
 
-                                            if (event.key === "Enter" || event.key === " ") {
+                                            if (event.key === "Enter" || event.key === " ") {
 
-                                                event.preventDefault();
+                                                event.preventDefault();
 
-                                                handleDestinationClick(destination);
+                                                handleDestinationClick(destination);
 
-                                            }
+                                            }
 
-                                        }}
+                                        }}
 
-                                    >
+                                    >
 
-                                        <div className="destination-image">
+                                        <div className="destination-image">
 
-                                            <img
+                                            <img
 
-                                                src={destination.images[0]}
+                                                src={destination.images[0]}
 
-                                                alt={destination.name}
+                                                alt={destination.name}
 
-                                            />
+                                            />
 
-                                            <button
+                                            <button
 
-                                                className="save-place"
+                                                className="save-place"
 
-                                                onClick={(event) => {
+                                                onClick={(event) => {
 
-                                                    event.stopPropagation();
+                                                    event.stopPropagation();
 
-                                                }}
+                                                }}
 
-                                                aria-label={`Save ${destination.name}`}
+                                                aria-label={`Save ${destination.name}`}
 
-                                            >
+                                            >
 
-                                                ♡
+                                                ♡
 
-                                            </button>
+                                            </button>
 
-                                        </div>
+                                        </div>
 
-                                        <div className="explore-destination-info">
+                                        <div className="explore-destination-info">
 
-                                            <div>
+                                            <div>
 
-                                                <h3>{destination.name}</h3>
+                                                <h3>{destination.name}</h3>
 
-                                                <p>{destination.places}</p>
+                                                <p>{destination.places}</p>
 
-                                            </div>
+                                            </div>
 
-                                            <div className="destination-rating">
+                                            <div className="destination-rating">
 
-                                                ★ {destination.rating}
+                                                ★ {destination.rating}
 
-                                            </div>
+                                            </div>
 
-                                        </div>
+                                        </div>
 
-                                    </div>
+                                    </div>
 
-                                ))}
+                                ))}
 
-                            </div>
+                            </div>
 
-                            {!showAllDestinations && (
+                            {!showAllDestinations && (
 
-                                <button
+                                <button
 
-                                    type="button"
+                                    type="button"
 
-                                    className="destination-scroll-button right"
+                                    className="destination-scroll-button right"
 
-                                    onClick={() => scrollDestinations(1)}
+                                    onClick={() => scrollDestinations(1)}
 
-                                    aria-label="Next destinations"
+                                    aria-label="Next destinations"
 
-                                >
+                                >
 
-                                    ›
+                                    ›
 
-                                </button>
+                                </button>
 
-                            )}
+                            )}
 
-                        </div>
+                        </div>
 
-                ) : (
+                ) : (
 
-                    <div className="no-results">
+                    <div className="no-results">
 
-                        <div className="no-results-icon">
+                        <div className="no-results-icon">
 
-                            ⌕
+                            ⌕
 
-                        </div>
+                        </div>
 
-                        <h3>
+                        <h3>
 
-                            No destinations found
+                            No destinations found
 
-                        </h3>
+                        </h3>
 
-                        <p>
+                        <p>
 
-                            There are no popular destinations
+                            There are no popular destinations
 
-                            in this category yet.
+                            in this category yet.
 
-                        </p>
+                        </p>
 
-                        <button
+                        <button
 
-                            onClick={() =>
+                            onClick={() =>
 
-                                setSelectedCategory(
+                                setSelectedCategory(
 
-                                    "All"
+                                    "All"
 
-                                )
+                                )
 
-                            }
+                            }
 
-                        >
+                        >
 
-                            View All
+                            View All
 
-                        </button>
+                        </button>
 
-                    </div>
+                    </div>
 
-                )}
+                )}
 
-            </section>
+            </section>
 
-            {/* Featured Destination */}
+            {/* Featured Destination */}
+            <section className="explore-section">
+                <div className="featured-destination">
+                    {previousFeaturedDestination && (
+                        <img
+                            className="featured-background-image featured-background-image-outgoing"
+                            src={getFeaturedImage(previousFeaturedDestination)}
+                            alt=""
+                            aria-hidden="true"
+                        />
+                    )}
+                    {featuredDestination && (
+                        <img
+                            key={featuredDestination.id || featuredDestination.name}
+                            className="featured-background-image featured-background-image-incoming"
+                            src={getFeaturedImage(featuredDestination)}
+                            alt={featuredDestination.name}
+                        />
+                    )}
+                    <div className="featured-overlay"></div>
+                    {previousFeaturedDestination && (
+                        <div className="featured-content featured-content-outgoing" aria-hidden="true">
+                            <p>FEATURED DESTINATION</p>
+                            <h2>{`${previousFeaturedDestination.name}, India`}</h2>
+                            <span>{`Discover ${previousFeaturedDestination.name}, explore local highlights, and find inspiration for your next Indian getaway.`}</span>
+                            <button type="button" tabIndex={-1} disabled aria-hidden="true">
+                                Explore Destination →
+                            </button>
+                        </div>
+                    )}
+                    <div
+                        key={featuredDestination?.id || featuredDestination?.name || "featured-placeholder"}
+                        className="featured-content featured-content-enter"
+                    >
+                        <p>FEATURED DESTINATION</p>
+                        <h2>
+                            {featuredDestination
+                                ? `${featuredDestination.name}, India`
+                                : popularLoading
+                                    ? "Finding your next destination..."
+                                    : "Explore India"}
+                        </h2>
+                        <span>
+                            {featuredDestination
+                                ? `Discover ${featuredDestination.name}, explore local highlights, and find inspiration for your next Indian getaway.`
+                                : popularLoading
+                                    ? "Loading destinations for your next journey."
+                                    : "Discover inspiring places and experiences across India."}
+                        </span>
+                        {featuredDestination && (
+                            <button
+                                type="button"
+                                onClick={() => handleDestinationClick(featuredDestination)}
+                            >
+                                Explore Destination →
+                            </button>
+                        )}
+                    </div>
+                </div>
+            </section>
 
-            <section className="explore-section">
+            {/* Inspiration */}
 
-                <div className="featured-destination">
+            <section className="explore-section inspiration-section">
 
-                    <img
+                <div className="explore-section-heading">
 
-                        src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=1800&q=85"
+                    <div>
 
-                        alt="Kyoto"
+                        <p>
 
-                    />
+                            GET INSPIRED
 
-                    <div className="featured-overlay"></div>
+                        </p>
 
-                    <div className="featured-content">
+                        <h2>
 
-                        <p>
+                            Ideas for your next journey
 
-                            FEATURED DESTINATION
+                        </h2>
 
-                        </p>
+                        <span>
 
-                        <h2>
+                            Find inspiration before you start
 
-                            Kyoto, Japan
+                            planning.
 
-                        </h2>
+                        </span>
 
-                        <span>
+                    </div>
 
-                            Discover traditional streets,
+                </div>
 
-                            peaceful temples, beautiful gardens
+                <div className="inspiration-grid">
 
-                            and unforgettable experiences.
+                    <div className="inspiration-card">
 
-                        </span>
+                        <img
 
-                        <button>
+                            src="https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=900&q=85"
 
-                            Explore Destination →
+                            alt="Weekend getaway"
 
-                        </button>
+                        />
 
-                    </div>
+                        <div>
 
-                </div>
+                            <span>
 
-            </section>
+                                TRAVEL IDEAS
 
-            {/* Inspiration */}
+                            </span>
 
-            <section className="explore-section inspiration-section">
+                            <h3>
 
-                <div className="explore-section-heading">
+                                Weekend Getaways
 
-                    <div>
+                            </h3>
 
-                        <p>
+                            <p>
 
-                            GET INSPIRED
+                                Short trips that are perfect for
 
-                        </p>
+                                escaping your everyday routine.
 
-                        <h2>
+                            </p>
 
-                            Ideas for your next journey
+                        </div>
 
-                        </h2>
+                    </div>
 
-                        <span>
+                    <div className="inspiration-card">
 
-                            Find inspiration before you start
+                        <img
 
-                            planning.
+                            src="https://images.unsplash.com/photo-1527631746610-bca00a040d60?auto=format&fit=crop&w=900&q=85"
 
-                        </span>
+                            alt="Couple travel"
 
-                    </div>
+                        />
 
-                </div>
+                        <div>
 
-                <div className="inspiration-grid">
+                            <span>
 
-                    <div className="inspiration-card">
+                                TRAVEL IDEAS
 
-                        <img
+                            </span>
 
-                            src="https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=900&q=85"
+                            <h3>
 
-                            alt="Weekend getaway"
+                                Trips for Two
 
-                        />
+                            </h3>
 
-                        <div>
+                            <p>
 
-                            <span>
+                                Discover beautiful destinations
 
-                                TRAVEL IDEAS
+                                for your next trip together.
 
-                            </span>
+                            </p>
 
-                            <h3>
+                        </div>
 
-                                Weekend Getaways
+                    </div>
 
-                            </h3>
+                    <div className="inspiration-card">
 
-                            <p>
+                        <img
 
-                                Short trips that are perfect for
+                            src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=900&q=85"
 
-                                escaping your everyday routine.
+                            alt="Adventure travel"
 
-                            </p>
+                        />
 
-                        </div>
+                        <div>
 
-                    </div>
+                            <span>
 
-                    <div className="inspiration-card">
+                                TRAVEL IDEAS
 
-                        <img
+                            </span>
 
-                            src="https://images.unsplash.com/photo-1527631746610-bca00a040d60?auto=format&fit=crop&w=900&q=85"
+                            <h3>
 
-                            alt="Couple travel"
+                                Adventure Escapes
 
-                        />
+                            </h3>
 
-                        <div>
+                            <p>
 
-                            <span>
+                                Mountains, nature and experiences
 
-                                TRAVEL IDEAS
+                                for adventurous travelers.
 
-                            </span>
+                            </p>
 
-                            <h3>
+                        </div>
 
-                                Trips for Two
+                    </div>
 
-                            </h3>
+                </div>
 
-                            <p>
+            </section>
 
-                                Discover beautiful destinations
+            {selectedDestination && (
 
-                                for your next trip together.
+                        <div
 
-                            </p>
+                            className="destination-preview-overlay"
 
-                        </div>
+                            onClick={closeDestinationPreview}
 
-                    </div>
+                        >
 
-                    <div className="inspiration-card">
+                    <div
 
-                        <img
+                        className="destination-preview"
 
-                            src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=900&q=85"
+                        onClick={(event) =>
 
-                            alt="Adventure travel"
+                            event.stopPropagation()
 
-                        />
+                        }
 
-                        <div>
+                    >
 
-                            <span>
+                        <button
 
-                                TRAVEL IDEAS
+                            className="destination-preview-close"
 
-                            </span>
+                            onClick={closeDestinationPreview}
 
-                            <h3>
+                            aria-label="Close preview"
 
-                                Adventure Escapes
+                        >
 
-                            </h3>
+                            ×
 
-                            <p>
+                        </button>
 
-                                Mountains, nature and experiences
+                        <div className="destination-preview-image">
 
-                                for adventurous travelers.
+                            <div className="destination-preview-slideshow">
 
-                            </p>
+                                {selectedDestination.images.map(
 
-                        </div>
+                                    (image, index) => (
 
-                    </div>
+                                        <img
 
-                </div>
+                                            key={image}
 
-            </section>
+                                            className={
 
-            {selectedDestination && (
+                                                index === currentImageIndex
 
-                        <div
+                                                    ? "destination-slide active"
 
-                            className="destination-preview-overlay"
+                                                    : "destination-slide"
 
-                            onClick={closeDestinationPreview}
+                                            }
 
-                        >
+                                            src={image}
 
-                    <div
+                                            alt={
 
-                        className="destination-preview"
+                                                selectedDestination.name
 
-                        onClick={(event) =>
+                                            }
 
-                            event.stopPropagation()
+                                        />
 
-                        }
+                                    )
 
-                    >
+                                )}
 
-                        <button
+                            </div>
 
-                            className="destination-preview-close"
+                            <div className="destination-image-dots">
 
-                            onClick={closeDestinationPreview}
+                                {selectedDestination.images.map(
 
-                            aria-label="Close preview"
+                                    (image, index) => (
 
-                        >
+                                        <button
 
-                            ×
+                                            key={image}
 
-                        </button>
+                                            type="button"
 
-                        <div className="destination-preview-image">
+                                            className={
 
-                            <div className="destination-preview-slideshow">
+                                                index === currentImageIndex
 
-                                {selectedDestination.images.map(
+                                                    ? "destination-image-dot active"
 
-                                    (image, index) => (
+                                                    : "destination-image-dot"
 
-                                        <img
+                                            }
 
-                                            key={image}
+                                            onClick={() =>
 
-                                            className={
+                                                setCurrentImageIndex(index)
 
-                                                index === currentImageIndex
+                                            }
 
-                                                    ? "destination-slide active"
+                                            aria-label={`Show image ${
 
-                                                    : "destination-slide"
+                                                index + 1
 
-                                            }
+                                            }`}
 
-                                            src={image}
+                                        />
 
-                                            alt={
+                                    )
 
-                                                selectedDestination.name
+                                )}
 
-                                            }
+                            </div>
 
-                                        />
+                        </div>
 
-                                    )
+                        <div className="destination-preview-content">
 
-                                )}
+                            <p className="destination-preview-label">
 
-                            </div>
+                                {selectedDestination.category}
 
-                            <div className="destination-image-dots">
+                            </p>
 
-                                {selectedDestination.images.map(
+                            <h2>
 
-                                    (image, index) => (
+                                {selectedDestination.name}
 
-                                        <button
+                            </h2>
 
-                                            key={image}
+                            <p className="destination-preview-location">
 
-                                            type="button"
+                                {selectedDestination.country ||
 
-                                            className={
+                                    "Explore this destination"}
 
-                                                index === currentImageIndex
+                            </p>
 
-                                                    ? "destination-image-dot active"
+                            <div className="destination-preview-rating">
 
-                                                    : "destination-image-dot"
+                                ★{" "}
 
-                                            }
+                                {selectedDestination.rating}
 
-                                            onClick={() =>
+                            </div>
 
-                                                setCurrentImageIndex(index)
+                            <p className="destination-preview-text">
 
-                                            }
+                                Discover places and experiences
 
-                                            aria-label={`Show image ${
+                                around{" "}
 
-                                                index + 1
+                                {selectedDestination.name}.
 
-                                            }`}
+                                Explore the destination and add
 
-                                        />
+                                it to your next trip.
 
-                                    )
+                            </p>
 
-                                )}
+                            <div className="destination-preview-places">
 
-                            </div>
+                                <span>Popular areas</span>
 
-                        </div>
+                                <p>
 
-                        <div className="destination-preview-content">
+                                    {
 
-                            <p className="destination-preview-label">
+                                        selectedDestination.places
 
-                                {selectedDestination.category}
+                                    }
 
-                            </p>
+                                </p>
 
-                            <h2>
+                            </div>
 
-                                {selectedDestination.name}
+                            <button
 
-                            </h2>
+                                className="destination-preview-button"
 
-                            <p className="destination-preview-location">
+                                onClick={() =>
 
-                                {selectedDestination.country ||
+                                    handleAddToTrip(
 
-                                    "Explore this destination"}
+                                        selectedDestination
 
-                            </p>
+                                    )
 
-                            <div className="destination-preview-rating">
+                                }
 
-                                ★{" "}
+                            >
 
-                                {selectedDestination.rating}
+                                Add to Trip →
 
-                            </div>
+                            </button>
 
-                            <p className="destination-preview-text">
+                        </div>
 
-                                Discover places and experiences
+                    </div>
 
-                                around{" "}
+                </div>
 
-                                {selectedDestination.name}.
+            )}
 
-                                Explore the destination and add
+        </div>
 
-                                it to your next trip.
-
-                            </p>
-
-                            <div className="destination-preview-places">
-
-                                <span>Popular areas</span>
-
-                                <p>
-
-                                    {
-
-                                        selectedDestination.places
-
-                                    }
-
-                                </p>
-
-                            </div>
-
-                            <button
-
-                                className="destination-preview-button"
-
-                                onClick={() =>
-
-                                    handleAddToTrip(
-
-                                        selectedDestination
-
-                                    )
-
-                                }
-
-                            >
-
-                                Add to Trip →
-
-                            </button>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            )}
-
-        </div>
-
-    );
+    );
 
 }
 
