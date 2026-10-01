@@ -21,11 +21,28 @@ function AddActivity({
 }) {
 
     const { currentUser } = useContext(AuthContext);
-    const [title, setTitle] = useState( activityToEdit?.title || nearbyPlace?.title || "");
-    const [type, setType] = useState(activityToEdit?.type || nearbyPlace?.type || "Sightseeing" );
-    const [time, setTime] = useState( activityToEdit?.time || "");
-    const [location, setLocation] = useState(activityToEdit?.location || nearbyPlace?.location |"");
-    const [notes, setNotes] = useState( activityToEdit?.notes || "");
+
+    const [title, setTitle] = useState(
+        activityToEdit?.title || ""
+    );
+
+    const [type, setType] = useState(
+        activityToEdit?.type || nearbyPlace?.type || "Sightseeing"
+    );
+
+    const [time, setTime] = useState(
+        activityToEdit?.time || ""
+    );
+
+    const [location, setLocation] = useState(
+        activityToEdit?.location ||
+        nearbyPlace?.location ||
+        ""
+    );
+
+    const [notes, setNotes] = useState(
+        activityToEdit?.notes || ""
+    );
 
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState("");
